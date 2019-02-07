@@ -1,2 +1,2 @@
 export * from './components';
-export { default as TouchBarRenderer } from './renderer';
+export { default as ReactTouchBar } from './renderer';

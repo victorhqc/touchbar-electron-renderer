@@ -1,32 +1,7 @@
 import Reconciler from 'react-reconciler';
-import { TouchBar as NativeTouchBar, nativeImage } from 'electron';
-import difference from 'lodash/difference';
-import some from 'lodash/some';
 
 import { TouchBarButton } from '../components';
 import createTouchBarElement from '../createTouchBarElement';
-
-const {
-  TouchBarGroup,
-  TouchBarPopover,
-  TouchBarScrubber,
-} = NativeTouchBar;
-
-// function createTouchBarElement(type, newProps) {
-//   switch (type) {
-//     case 'group':
-//       return new TouchBarGroup(newProps);
-//     case 'touch-button':
-//       return createTouchBarButton(type, newProps);
-//     case 'popover':
-//       return new TouchBarPopover(newProps);
-//     case 'scrubber':
-//       return new TouchBarScrubber(newProps);
-//     default:
-//       console.warn(`Component with type: ${type} is not supported`);
-//       return null;
-//   }
-// }
 
 const HostConfig = {
   now: Date.now,
@@ -40,8 +15,8 @@ const HostConfig = {
   shouldSetTextContent: function shouldSetTextContent() {
     return false;
   },
-  createTextInstance: function createTextInstance() {
-    // return newText;
+  createTextInstance: function createTextInstance(newText) {
+    return newText;
   },
   createInstance: function createInstance(type, newProps) {
     return createTouchBarElement(type, newProps);
@@ -57,8 +32,8 @@ const HostConfig = {
     root.createInstance();
   },
   commitMount: function commitMount() {},
-  appendChildToContainer: function appendChildToContainer(parent, child) { // parentInstance, child
-    parent.appendChild(child);
+  appendChildToContainer: function appendChildToContainer(parent, child) {
+    parent.appendChild(child.createInstance());
   },
   appendChild: function appendChild(...args) { // parentInstance, child
     // console.log('appendChild', ...args);

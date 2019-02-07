@@ -1,12 +1,22 @@
-import { TouchBar as NativeTouchBar } from 'electron';
-import { MOUSE_EVENTS } from '../constants';
+// TODO: Electron & remote are needed to support Atom. This is just a workaround.
+import electron from 'electron';
+import remote from 'remote';
+
+// TODO: Electron & remote are needed to support Atom. This is just a workaround.
+const { TouchBar: NativeTouchBar } = electron || {};
+const { TouchBar: RemoteTouchBar } = remote || {};
 
 class TouchBar {
-  constructor(children = []) {
-    this.children = children;
+  constructor(electronWindow) {
+    this.children = [];
+    this.electronWindow = electronWindow;
   }
 
   appendChild(child) {
+    if (!child) {
+      return;
+    }
+
     this.children.push(child);
   }
 
@@ -16,8 +26,14 @@ class TouchBar {
   }
 
   createInstance() {
-    const touchBar = new NativeTouchBar(this.children);
-    this.setTouchBar(touchBar);
+    console.log('CHILDREN', this.children);
+
+    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
+    const touchBar = NativeTouchBar ?
+      new NativeTouchBar(this.children)
+      : new RemoteTouchBar(this.children);
+
+    this.electronWindow.setTouchBar(touchBar);
 
     return touchBar;
   }
