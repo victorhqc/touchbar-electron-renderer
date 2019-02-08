@@ -1,4 +1,5 @@
 import Reconciler from 'react-reconciler';
+import difference from 'lodash/difference';
 
 import { TouchBarText } from '../components';
 import createTouchBarElement from '../createTouchBarElement';
@@ -22,21 +23,22 @@ const HostConfig = {
     return createTouchBarElement(type, newProps);
   },
   appendInitialChild: function appendInitialChild(parent, child) {
-    parent.appendChild(child.createInstance());
+    parent.appendChild(child);
   },
   finalizeInitialChildren: function finalizeInitialChildren() {
     return {};
   },
-  prepareForCommit: function prepareForCommit() {},
+  prepareForCommit: function prepareForCommit(...args) {
+    console.log('PREPARE FOR COMMIT', ...args);
+  },
   resetAfterCommit: function resetAfterCommit(root) {
     root.createInstance();
   },
-  commitMount: function commitMount() {},
   appendChildToContainer: function appendChildToContainer(parent, child) {
-    parent.appendChild(child.createInstance());
+    parent.appendChild(child);
   },
   appendChild: function appendChild(parent, child) {
-    parent.appendChild(child.createInstance());
+    parent.appendChild(child);
   },
   insertBefore: function insertBefore(parent, child, beforeChild) { // parentInstance, child, beforeChild
     parent.insertBefore(child, beforeChild);
@@ -50,14 +52,47 @@ const HostConfig = {
   insertInContainerBefore: function insertInContainerBefore(container, child, beforeChild) {
     parent.insertBefore(child, beforeChild);
   },
-  prepareUpdate: function prepareUpdate() {
+  prepareUpdate: function prepareUpdate(instance, type, oldProps, newProps, rootContainerInstance) {
+    // A prop was deleted or deleted.
+    if (
+      Object.keys(oldProps).length > Object.keys(newProps).length
+      || Object.keys(oldProps).length < Object.keys(newProps).length
+    ) {
+      return newProps;
+    }
+
+    const diff = Object.keys(oldProps).reduce((prev, key) => {
+      if (oldProps[key] !== newProps[key]) {
+        return {
+          ...prev,
+          [key]: newProps[key],
+        };
+      }
+
+      return prev;
+    }, {});
+
+    if (Object.keys(diff).length > 0) {
+      return diff;
+    }
+
     return undefined;
   },
-  commitUpdate: function commitUpdate() {
-    return undefined;
+  commitUpdate: function commitUpdate(instance, updatePayload, type, oldProps, newProps, finishedWork) {
+    // console.log('COMMITING UPDATE', {instance, updatePayload, type, oldProps, newProps, finishedWork});
+    instance.updateProps(newProps);
   },
   commitTextUpdate: function commitTextUpdate(textInstance, oldText, newText) {
     textInstance.replaceText(newText);
+  },
+  commitMount: function commitMount(element, type, newProps, fiberNode) {
+    // console.log('COMMITING MOUNT', {
+    //   element,
+    //   type,
+    //   newProps,
+    //   fiberNode,
+    // });
+
   },
   resetTextContent: function resetTextContent() {
 

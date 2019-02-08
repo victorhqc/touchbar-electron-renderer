@@ -39,12 +39,12 @@ class TouchBar {
   }
 
   createInstance() {
-    console.log('CHILDREN', this.children);
+    const nativeChildren = this.children.map(child => child.createInstance());
 
     // TODO: Electron & remote are needed to support Atom. This is just a workaround.
     const touchBar = NativeTouchBar ?
-      new NativeTouchBar(this.children)
-      : new RemoteTouchBar(this.children);
+      new NativeTouchBar(nativeChildren)
+      : new RemoteTouchBar(nativeChildren);
 
     this.electronWindow.setTouchBar(touchBar);
 

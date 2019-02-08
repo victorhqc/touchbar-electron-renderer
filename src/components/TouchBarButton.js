@@ -39,12 +39,6 @@ class TouchBarButton {
    * @return {void}
    */
   appendChild(child) {
-    console.log('CHILD', child);
-    if (typeof child !== 'string') {
-      console.warn(`TouchBarButton can only have string children but received: ${typeof child}`);
-      return;
-    }
-
     this.child = child;
   }
 
@@ -54,6 +48,10 @@ class TouchBarButton {
 
   removeChild() {
     this.child = null;
+  }
+
+  updateProps(newProps) {
+    this.props = newProps;
   }
 
   createInstance() {
@@ -67,7 +65,7 @@ class TouchBarButton {
 
     const args = {
       ...props,
-      label: this.child,
+      label: this.child && this.child.createInstance(),
       click: onClick,
     };
 
