@@ -39,12 +39,17 @@ class TouchBarButton {
    * @return {void}
    */
   appendChild(child) {
+    console.log('CHILD', child);
     if (typeof child !== 'string') {
       console.warn(`TouchBarButton can only have string children but received: ${typeof child}`);
       return;
     }
 
     this.child = child;
+  }
+
+  insertBefore(child) {
+    return this.appendChild(child);
   }
 
   removeChild() {

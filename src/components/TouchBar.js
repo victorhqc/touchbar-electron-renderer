@@ -1,6 +1,7 @@
 // TODO: Electron & remote are needed to support Atom. This is just a workaround.
 import electron from 'electron';
 import remote from 'remote';
+import flatten from 'lodash/flatten';
 
 // TODO: Electron & remote are needed to support Atom. This is just a workaround.
 const { TouchBar: NativeTouchBar } = electron || {};
@@ -18,6 +19,18 @@ class TouchBar {
     }
 
     this.children.push(child);
+  }
+
+  insertBefore(child, beforeChild) {
+    const orderedChildren = this.children.reduce((prev, currentChild) => {
+      if (beforeChild === currentChild) {
+        return [child, beforeChild];
+      }
+
+      return prev;
+    }, []);
+
+    this.children = flatten(orderedChildren);
   }
 
   removeChild(child) {

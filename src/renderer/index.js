@@ -1,6 +1,6 @@
 import Reconciler from 'react-reconciler';
 
-import { TouchBarButton } from '../components';
+import { TouchBarText } from '../components';
 import createTouchBarElement from '../createTouchBarElement';
 
 const HostConfig = {
@@ -16,13 +16,13 @@ const HostConfig = {
     return false;
   },
   createTextInstance: function createTextInstance(newText) {
-    return newText;
+    return new TouchBarText(newText);
   },
   createInstance: function createInstance(type, newProps) {
     return createTouchBarElement(type, newProps);
   },
   appendInitialChild: function appendInitialChild(parent, child) {
-    parent.appendChild(child);
+    parent.appendChild(child.createInstance());
   },
   finalizeInitialChildren: function finalizeInitialChildren() {
     return {};
@@ -35,21 +35,20 @@ const HostConfig = {
   appendChildToContainer: function appendChildToContainer(parent, child) {
     parent.appendChild(child.createInstance());
   },
-  appendChild: function appendChild(...args) { // parentInstance, child
-    // console.log('appendChild', ...args);
+  appendChild: function appendChild(parent, child) {
+    parent.appendChild(child.createInstance());
   },
-  insertBefore: function insertBefore(...args) { // parentInstance, child, beforeChild
-    // console.log('insertBefore', ...args);
+  insertBefore: function insertBefore(parent, child, beforeChild) { // parentInstance, child, beforeChild
+    parent.insertBefore(child, beforeChild);
   },
-  removeChild: function removeChild(...args) { // parentInstance, child
-    // console.log('removeChild', ...args);
+  removeChild: function removeChild(parent, child) { // parentInstance, child
+    parent.removeChild(child);
   },
-  removeChildFromContainer: function removeChildFromContainer(...args) { // container, child
-    // console.log('removeChildFromContainer', ...args);
+  removeChildFromContainer: function removeChildFromContainer(container, child) { // container, child
+    parent.removeChild(child);
   },
-  insertInContainerBefore: function insertInContainerBefore(...args) {
-    // container, child, beforeChild
-    // console.log('insertInContainerBefore', ...args);
+  insertInContainerBefore: function insertInContainerBefore(container, child, beforeChild) {
+    parent.insertBefore(child, beforeChild);
   },
   prepareUpdate: function prepareUpdate() {
     return undefined;
@@ -57,8 +56,8 @@ const HostConfig = {
   commitUpdate: function commitUpdate() {
     return undefined;
   },
-  commitTextUpdate: function commitTextUpdate(...args) { // textInstance, oldText, newText
-    // console.log('commitTextUpdate', ...args);
+  commitTextUpdate: function commitTextUpdate(textInstance, oldText, newText) {
+    textInstance.replaceText(newText);
   },
   resetTextContent: function resetTextContent() {
 
