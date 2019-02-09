@@ -55,7 +55,7 @@ class TouchBarButton {
   }
 
   createInstance() {
-    const { children, onClick, ...props} = this.props;
+    const { children, onClick, ...props } = this.props;
 
     warnAboutUserInteractions({
       acceptedEvents: ['onClick'],
