@@ -1,6 +1,6 @@
 class TouchBarText {
   constructor(text) {
-    this.text = text;
+    this.appendChild(text);
   }
 
   // Text can have only one child.

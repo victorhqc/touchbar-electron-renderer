@@ -66,12 +66,11 @@ class TouchBarColorPicker {
 
   createInstance() {
     const { children, onChange, colors, ...props } = this.props;
-    console.log('CHILDREN IN TouchBarColorPicker', children);
 
     const args = {
       ...props,
       change: onChange,
-      availableColors: colors || children.map(child => buildChild(child)),
+      availableColors: colors || this.children.map(child => buildChild(child)),
     };
 
     // TODO: Electron & remote are needed to support Atom. This is just a workaround.

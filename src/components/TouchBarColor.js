@@ -1,8 +1,9 @@
 import TouchBarText from './TouchBarText';
+import { buildChild } from '../utils';
 
 class TouchBarColor {
   constructor(text) {
-    this.text = text;
+    this.appendChild(text);
   }
 
   // Text can have only one child.
@@ -32,7 +33,7 @@ class TouchBarColor {
   }
 
   createInstance() {
-    return this.text;
+    return buildChild(this.text);
   }
 }
 
