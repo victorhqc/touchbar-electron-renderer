@@ -3,6 +3,7 @@ import electron from 'electron';
 import remote from 'remote';
 import difference from 'lodash/difference';
 import some from 'lodash/some';
+import uuidv4 from 'uuid/v4';
 
 import { insertBeforeChild, removeChild, buildChild } from '../utils';
 import TouchBarColor from './TouchBarColor';
@@ -24,8 +25,10 @@ function isValidChild(child) {
 class TouchBarColorPicker {
   constructor(props) {
     this.props = props;
+    this.id = uuidv4();
 
     this.children = [];
+    this.instance = null;
   }
 
   /**
@@ -64,22 +67,49 @@ class TouchBarColorPicker {
     this.props = newProps;
   }
 
-  createInstance() {
+  getNativeArgs() {
     const { children, onChange, colors, selected, ...props } = this.props;
 
-    const args = {
+    return {
       ...props,
       change: onChange,
       selectedColor: selected,
       availableColors: colors || this.children.map(child => buildChild(child)),
     };
+  }
+
+  createInitialInstance() {
+    const args = this.getNativeArgs();
 
     // TODO: Electron & remote are needed to support Atom. This is just a workaround.
     if (NativeTouchBar) {
-      return new NativeTouchBar.TouchBarColorPicker(args);
+      this.instance = new NativeTouchBar.TouchBarColorPicker(args);
+    } else {
+      this.instance = new RemoteTouchBar.TouchBarColorPicker(args);
     }
 
-    return new RemoteTouchBar.TouchBarColorPicker(args);
+    return this.instance;
+  }
+
+  updateInstance() {
+    const args = this.getNativeArgs();
+
+    // Update instance.
+    Object.keys(args).forEach((key) => {
+      if (this.instance[key] !== args[key]) {
+        this.instance[key] = args[key];
+      }
+    });
+
+    return this.instance;
+  }
+
+  createInstance() {
+    if (!this.instance) {
+      return this.createInitialInstance();
+    }
+
+    return this.updateInstance();
   }
 }
 

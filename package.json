@@ -61,5 +61,8 @@
     "lodash": "^4.17.11",
     "react": "^16.8.1",
     "react-reconciler": "0.19.1"
+  },
+  "dependencies": {
+    "uuid": "^3.3.2"
   }
 }

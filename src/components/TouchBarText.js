@@ -1,5 +1,8 @@
+import uuidv4 from 'uuid/v4';
+
 class TouchBarText {
   constructor(text) {
+    this.id = uuidv4();
     this.appendChild(text);
   }
 

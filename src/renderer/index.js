@@ -28,8 +28,8 @@ const HostConfig = {
   finalizeInitialChildren: function finalizeInitialChildren() {
     return {};
   },
-  prepareForCommit: function prepareForCommit(...args) {
-    console.log('PREPARE FOR COMMIT', ...args);
+  prepareForCommit: function prepareForCommit(root) {
+
   },
   resetAfterCommit: function resetAfterCommit(root) {
     console.time('reset-after-commit');
@@ -49,10 +49,10 @@ const HostConfig = {
     parent.removeChild(child);
   },
   removeChildFromContainer: function removeChildFromContainer(container, child) { // container, child
-    parent.removeChild(child);
+    container.removeChild(child);
   },
   insertInContainerBefore: function insertInContainerBefore(container, child, beforeChild) {
-    parent.insertBefore(child, beforeChild);
+    container.insertBefore(child, beforeChild);
   },
   prepareUpdate: function prepareUpdate(instance, type, oldProps, newProps, rootContainerInstance) {
     // A prop was deleted or deleted.

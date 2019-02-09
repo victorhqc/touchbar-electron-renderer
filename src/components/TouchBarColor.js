@@ -1,8 +1,11 @@
+import uuidv4 from 'uuid/v4';
+
 import TouchBarText from './TouchBarText';
 import { buildChild } from '../utils';
 
 class TouchBarColor {
   constructor(text) {
+    this.id = uuidv4();
     this.appendChild(text);
   }
 

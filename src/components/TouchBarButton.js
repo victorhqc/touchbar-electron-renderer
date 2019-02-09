@@ -1,11 +1,13 @@
 // TODO: Electron & remote are needed to support Atom. This is just a workaround.
 import electron from 'electron';
 import remote from 'remote';
+import uuidv4 from 'uuid/v4';
 
 import difference from 'lodash/difference';
 import some from 'lodash/some';
 
 import { MOUSE_EVENTS } from '../constants';
+import { buildChild } from '../utils';
 
 
 // TODO: Electron & remote are needed to support Atom. This is just a workaround.
@@ -28,9 +30,11 @@ function warnAboutUserInteractions({ type, props, acceptedEvents }) {
 class TouchBarButton {
   constructor(props) {
     this.props = props;
+    this.id = uuidv4();
 
     // TouchBarButton can have only one child.
     this.child = null;
+    this.instance = null;
   }
 
   /**
@@ -54,7 +58,7 @@ class TouchBarButton {
     this.props = newProps;
   }
 
-  createInstance() {
+  getNativeArgs() {
     const { children, onClick, ...props } = this.props;
 
     warnAboutUserInteractions({
@@ -63,18 +67,45 @@ class TouchBarButton {
       props,
     });
 
-    const args = {
+    return {
       ...props,
-      label: this.child && this.child.createInstance(),
+      label: buildChild(this.child),
       click: onClick,
     };
+  }
+
+  createInitialInstance() {
+    const args = this.getNativeArgs();
 
     // TODO: Electron & remote are needed to support Atom. This is just a workaround.
     if (NativeTouchBar) {
-      return new NativeTouchBar.TouchBarButton(args);
+      this.instance = new NativeTouchBar.TouchBarButton(args);
+    } else {
+      this.instance = new RemoteTouchBar.TouchBarButton(args);
     }
 
-    return new RemoteTouchBar.TouchBarButton(args);
+    return this.instance;
+  }
+
+  updateInstance() {
+    const args = this.getNativeArgs();
+
+    // Update instance.
+    Object.keys(args).forEach((key) => {
+      if (this.instance[key] !== args[key]) {
+        this.instance[key] = args[key];
+      }
+    });
+
+    return this.instance;
+  }
+
+  createInstance() {
+    if (!this.instance) {
+      return this.createInitialInstance();
+    }
+
+    return this.updateInstance();
   }
 }
 
