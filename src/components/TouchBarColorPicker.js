@@ -65,11 +65,12 @@ class TouchBarColorPicker {
   }
 
   createInstance() {
-    const { children, onChange, colors, ...props } = this.props;
+    const { children, onChange, colors, selected, ...props } = this.props;
 
     const args = {
       ...props,
       change: onChange,
+      selectedColor: selected,
       availableColors: colors || this.children.map(child => buildChild(child)),
     };
 
