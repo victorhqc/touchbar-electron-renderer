@@ -5,6 +5,7 @@ import {
   TouchBarGroup,
   TouchBarLabel,
   TouchBarPopover,
+  TouchBarScrubber,
 } from './components';
 
 function createTouchBarElement(type, props) {
@@ -21,6 +22,8 @@ function createTouchBarElement(type, props) {
       return new TouchBarLabel(props);
     case 'popover':
       return new TouchBarPopover(props);
+    case 'scrubber':
+      return new TouchBarScrubber(props);
     default:
       return null;
   }

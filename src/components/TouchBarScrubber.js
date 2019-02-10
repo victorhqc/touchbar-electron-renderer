@@ -8,7 +8,7 @@ import { insertBeforeChild, removeChild } from '../utils';
 const { TouchBar: NativeTouchBar } = electron || {};
 const { TouchBar: RemoteTouchBar } = remote || {};
 
-class TouchBarPopover {
+class TouchBarScrubber {
   constructor(props) {
     this.children = [];
     this.childrenSinceLastRender = 0;
@@ -44,10 +44,12 @@ class TouchBarPopover {
   }
 
   getNativeArgs() {
-    const { children, ...props } = this.props;
+    const { children, onChange, onClick, ...props } = this.props;
 
     return {
       ...props,
+      select: onChange,
+      highlight: onClick,
       items: this.children.map(child => child.createInstance()),
     };
   }
@@ -58,8 +60,8 @@ class TouchBarPopover {
 
     // TODO: Electron & remote are needed to support Atom. This is just a workaround.
     this.instance = NativeTouchBar ?
-      new NativeTouchBar.TouchBarPopover(args)
-      : new RemoteTouchBar.TouchBarPopover(args);
+      new NativeTouchBar.TouchBarScrubber(args)
+      : new RemoteTouchBar.TouchBarScrubber(args);
 
     return this.instance;
   }
@@ -96,4 +98,4 @@ class TouchBarPopover {
   }
 }
 
-export default TouchBarPopover;
+export default TouchBarScrubber;
