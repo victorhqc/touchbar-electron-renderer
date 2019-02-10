@@ -3,62 +3,38 @@ import electron from 'electron';
 import remote from 'remote';
 import uuidv4 from 'uuid/v4';
 
-import { insertBeforeChild, removeChild, buildChild } from '../utils';
-import TouchBarColor from './TouchBarColor';
+import { buildChild } from '../utils';
+
 
 // TODO: Electron & remote are needed to support Atom. This is just a workaround.
 const { TouchBar: NativeTouchBar } = electron || {};
 const { TouchBar: RemoteTouchBar } = remote || {};
 
-function isValidChild(child) {
-  if (!child) { return false; }
-  if ( !child instanceof TouchBarColor && typeof child !== 'string') {
-    console.warn('<touch-bar /> Can only have <color /> or text as children.');
-    return false;
-  }
-
-  return true;
-}
-
-class TouchBarColorPicker {
+class TouchBarLabel {
   constructor(props) {
     this.props = props;
     this.id = uuidv4();
 
-    this.children = [];
+    // TouchBarLabel can have only one child.
+    this.child = null;
     this.instance = null;
   }
 
   /**
-   * TouchBarColorPicker can only have text children.
+   * TouchBarLabel can only have text children.
    * @param  {stting} child
    * @return {void}
    */
   appendChild(child) {
-    if (!isValidChild(child)) {
-      return;
-    }
-
-    this.children.push(child);
+    this.child = child;
   }
 
-  insertBefore(newChild, beforeChild) {
-    if (!isValidChild(child)) {
-      return;
-    }
-
-    this.children = insertBeforeChild({
-      children: this.children,
-      newChild,
-      beforeChild,
-    });
+  insertBefore(child) {
+    return this.appendChild(child);
   }
 
-  removeChild(child) {
-    this.children = removeChild({
-      children: this.children,
-      child,
-    });
+  removeChild() {
+    this.child = null;
   }
 
   updateProps(newProps) {
@@ -66,13 +42,12 @@ class TouchBarColorPicker {
   }
 
   getNativeArgs() {
-    const { children, onChange, colors, selected, ...props } = this.props;
+    const { children, color, ...props } = this.props;
 
     return {
       ...props,
-      change: onChange,
-      selectedColor: selected,
-      availableColors: colors || this.children.map(child => buildChild(child)),
+      textColor: color,
+      label: buildChild(this.child),
     };
   }
 
@@ -81,9 +56,9 @@ class TouchBarColorPicker {
 
     // TODO: Electron & remote are needed to support Atom. This is just a workaround.
     if (NativeTouchBar) {
-      this.instance = new NativeTouchBar.TouchBarColorPicker(args);
+      this.instance = new NativeTouchBar.TouchBarLabel(args);
     } else {
-      this.instance = new RemoteTouchBar.TouchBarColorPicker(args);
+      this.instance = new RemoteTouchBar.TouchBarLabel(args);
     }
 
     return this.instance;
@@ -111,4 +86,4 @@ class TouchBarColorPicker {
   }
 }
 
-export default TouchBarColorPicker;
+export default TouchBarLabel;
