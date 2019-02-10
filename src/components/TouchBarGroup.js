@@ -61,7 +61,7 @@ class TouchBarGroup {
   updateInstance() {
     this.childrenSinceLastRender = this.children.length;
     const updatedChildren = this.children.map(child => child.createInstance());
-    this.instance.items = updatedChildren;
+    // this.instance.items = updatedChildren;
 
     return this.instance;
   }

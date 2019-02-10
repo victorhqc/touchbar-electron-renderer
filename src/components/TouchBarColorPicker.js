@@ -23,6 +23,7 @@ function isValidChild(child) {
 class TouchBarColorPicker {
   constructor(props) {
     this.props = props;
+    this.prevProps = {};
     this.id = uuidv4();
 
     this.children = [];
@@ -62,6 +63,7 @@ class TouchBarColorPicker {
   }
 
   updateProps(newProps) {
+    this.prevProps = Object.assign({}, this.props);
     this.props = newProps;
   }
 
@@ -103,6 +105,11 @@ class TouchBarColorPicker {
   }
 
   createInstance() {
+    if (this.props === this.prevProps) {
+      console.log('NOTHING CHANGED HERE', this.prototype.name, this);
+      return;
+    }
+
     if (!this.instance) {
       return this.createInitialInstance();
     }

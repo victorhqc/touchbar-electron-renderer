@@ -13,10 +13,12 @@ class TouchBarScrubber {
     this.children = [];
     this.childrenSinceLastRender = 0;
     this.props = props;
+    this.prevProps = {};
     this.instance = null;
   }
 
   updateProps(newProps) {
+    this.prevProps = Object.assign({}, this.props);
     this.props = newProps;
   }
 
@@ -81,12 +83,16 @@ class TouchBarScrubber {
     });
 
     const updatedChildren = this.children.map(child => child.createInstance());
-    this.instance.items = updatedChildren;
 
     return this.instance;
   }
 
   createInstance() {
+    if (this.props === this.prevProps) {
+      console.log('NOTHING CHANGED HERE', this.prototype.name, this);
+      return;
+    }
+
     if (
       !this.instance
       || this.childrenSinceLastRender !== this.children.length
