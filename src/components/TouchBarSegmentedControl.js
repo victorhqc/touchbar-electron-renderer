@@ -114,7 +114,6 @@ export default class TouchBarSegmentedControl {
 
   createInstance() {
     if (this.props === this.prevProps) {
-      console.log('NOTHING CHANGED HERE', this.prototype.name, this);
       return;
     }
 

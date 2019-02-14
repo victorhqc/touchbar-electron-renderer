@@ -40,7 +40,6 @@ class TouchBar {
   }
 
   createInitialInstance() {
-    console.log('CREATE WITH CHILDREN', this.children);
     this.childrenSinceLastRender = this.children.length;
     const nativeChildren = this.children.map(child => child.createInstance());
     const args = {
@@ -59,7 +58,6 @@ class TouchBar {
   }
 
   updateInstance() {
-    console.log('UPDATE WITH NEW CHILDREN', this.children);
     this.childrenSinceLastRender = this.children.length;
     const updatedChildren = this.children.map(child => child.createInstance());
 

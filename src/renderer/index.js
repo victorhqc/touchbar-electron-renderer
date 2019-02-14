@@ -81,20 +81,12 @@ const HostConfig = {
     return undefined;
   },
   commitUpdate: function commitUpdate(instance, updatePayload, type, oldProps, newProps, finishedWork) {
-    // console.log('COMMITING UPDATE', {instance, updatePayload, type, oldProps, newProps, finishedWork});
     instance.updateProps(newProps);
   },
   commitTextUpdate: function commitTextUpdate(textInstance, oldText, newText) {
     textInstance.replaceText(newText);
   },
   commitMount: function commitMount(element, type, newProps, fiberNode) {
-    // console.log('COMMITING MOUNT', {
-    //   element,
-    //   type,
-    //   newProps,
-    //   fiberNode,
-    // });
-
   },
   resetTextContent: function resetTextContent() {
 
