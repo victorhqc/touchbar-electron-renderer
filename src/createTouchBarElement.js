@@ -6,6 +6,8 @@ import {
   TouchBarLabel,
   TouchBarPopover,
   TouchBarScrubber,
+  TouchBarSegment,
+  TouchBarSegmentedControl,
 } from './components';
 
 function createTouchBarElement(type, props) {
@@ -24,6 +26,10 @@ function createTouchBarElement(type, props) {
       return new TouchBarPopover(props);
     case 'scrubber':
       return new TouchBarScrubber(props);
+    case 'segment':
+      return new TouchBarSegment(props);
+    case 'segmented-control':
+      return new TouchBarSegmentedControl(props);
     default:
       return null;
   }

@@ -6,4 +6,6 @@ export { default as TouchBarGroup } from './TouchBarGroup';
 export { default as TouchBarLabel } from './TouchBarLabel';
 export { default as TouchBarPopover } from './TouchBarPopover';
 export { default as TouchBarScrubber } from './TouchBarScrubber';
+export { default as TouchBarSegment } from './TouchBarSegment';
+export { default as TouchBarSegmentedControl } from './TouchBarSegmentedControl';
 export { default as TouchBarText } from './TouchBarText';

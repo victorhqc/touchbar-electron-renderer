@@ -4,7 +4,7 @@ import remote from 'remote';
 import uuidv4 from 'uuid/v4';
 
 import { insertBeforeChild, removeChild, buildChild } from '../utils';
-import TouchBarColor from './TouchBarColor';
+import TouchBarSegment from './TouchBarSegment';
 
 // TODO: Electron & remote are needed to support Atom. This is just a workaround.
 const { TouchBar: NativeTouchBar } = electron || {};
@@ -12,15 +12,15 @@ const { TouchBar: RemoteTouchBar } = remote || {};
 
 function isValidChild(child) {
   if (!child) { return false; }
-  if ( !child instanceof TouchBarColor && typeof child !== 'string') {
-    console.warn('<color-picker /> Can only have <color /> or text as children.');
+  if ( !child instanceof TouchBarSegment && typeof child !== 'string') {
+    console.warn('<segmented-control /> Can only have <segment /> or text as children.');
     return false;
   }
 
   return true;
 }
 
-class TouchBarColorPicker {
+export default class TouchBarSegmentedControl {
   constructor(props) {
     this.props = props;
     this.prevProps = {};
@@ -31,7 +31,7 @@ class TouchBarColorPicker {
   }
 
   /**
-   * TouchBarColorPicker can only have <color /> children.
+   * TouchBarSegmentedControl can only have <segment /> children.
    * @param  {stting} child
    * @return {void}
    */
@@ -68,13 +68,21 @@ class TouchBarColorPicker {
   }
 
   getNativeArgs() {
-    const { children, onChange, colors, selected, ...props } = this.props;
+    const {
+      children,
+      onChange,
+      segments,
+      style,
+      selected,
+      ...props
+    } = this.props;
 
     return {
       ...props,
       change: onChange,
       selectedColor: selected,
-      availableColors: colors || this.children.map(child => buildChild(child)),
+      segmentStyle: style,
+      segments: segments || this.children.map(child => buildChild(child)),
     };
   }
 
@@ -83,9 +91,9 @@ class TouchBarColorPicker {
 
     // TODO: Electron & remote are needed to support Atom. This is just a workaround.
     if (NativeTouchBar) {
-      this.instance = new NativeTouchBar.TouchBarColorPicker(args);
+      this.instance = new NativeTouchBar.TouchBarSegmentedControl(args);
     } else {
-      this.instance = new RemoteTouchBar.TouchBarColorPicker(args);
+      this.instance = new RemoteTouchBar.TouchBarSegmentedControl(args);
     }
 
     return this.instance;
@@ -117,5 +125,3 @@ class TouchBarColorPicker {
     return this.updateInstance();
   }
 }
-
-export default TouchBarColorPicker;
