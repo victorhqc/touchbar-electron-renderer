@@ -8,6 +8,7 @@ import {
   TouchBarScrubber,
   TouchBarSegment,
   TouchBarSegmentedControl,
+  TouchBarSlider,
 } from './components';
 
 function createTouchBarElement(type, props) {
@@ -30,6 +31,8 @@ function createTouchBarElement(type, props) {
       return new TouchBarSegment(props);
     case 'segmented-control':
       return new TouchBarSegmentedControl(props);
+    case 'slider':
+      return new TouchBarSlider(props);
     default:
       return null;
   }
