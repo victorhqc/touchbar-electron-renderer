@@ -7,7 +7,7 @@ import difference from 'lodash/difference';
 import some from 'lodash/some';
 
 import { MOUSE_EVENTS } from '../constants';
-import { buildChild } from '../utils';
+import { buildChild, isValidIcon } from '../utils';
 
 
 // TODO: Electron & remote are needed to support Atom. This is just a workaround.
@@ -59,7 +59,7 @@ class TouchBarButton {
   }
 
   getNativeArgs() {
-    const { children, onClick, ...props } = this.props;
+    const { children, onClick, icon, ...props } = this.props;
 
     warnAboutUserInteractions({
       acceptedEvents: ['onClick'],
@@ -70,6 +70,7 @@ class TouchBarButton {
     return {
       ...props,
       label: buildChild(this.child),
+      icon: icon && isValidIcon(icon) ? icon : null,
       click: onClick,
     };
   }
