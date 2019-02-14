@@ -3,8 +3,7 @@ import electron from 'electron';
 import remote from 'remote';
 import uuidv4 from 'uuid/v4';
 
-import difference from 'lodash/difference';
-import some from 'lodash/some';
+import debounce from 'lodash/debounce';
 
 import { buildChild } from '../utils';
 
@@ -50,7 +49,8 @@ class TouchBarSlider {
     return {
       ...props,
       label: buildChild(this.child),
-      change: onChange,
+      // If not debounced, it causes serious performance issues
+      change: onChange && debounce(onChange, props.debounceTime || 250),
     };
   }
 

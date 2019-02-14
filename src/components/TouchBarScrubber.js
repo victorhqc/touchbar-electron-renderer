@@ -1,6 +1,7 @@
 // TODO: Electron & remote are needed to support Atom. This is just a workaround.
 import electron from 'electron';
 import remote from 'remote';
+import debounce from 'lodash/debounce';
 
 import { insertBeforeChild, removeChild } from '../utils';
 
@@ -51,7 +52,8 @@ class TouchBarScrubber {
     return {
       ...props,
       select: onChange,
-      highlight: onClick,
+      // If not debounced, it causes serious performance issues
+      highlight: onClick && debounce(onClick, props.debounceTime || 250),
       items: this.children.map(child => child.createInstance()),
     };
   }
