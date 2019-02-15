@@ -32,9 +32,7 @@ const HostConfig = {
 
   },
   resetAfterCommit: function resetAfterCommit(root) {
-    console.time('reset-after-commit');
     root.createInstance();
-    console.timeEnd('reset-after-commit');
   },
   appendChildToContainer: function appendChildToContainer(parent, child) {
     parent.appendChild(child);
