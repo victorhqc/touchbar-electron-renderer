@@ -11,7 +11,7 @@ const { TouchBar: RemoteTouchBar } = remote || {};
 class TouchBar {
   constructor(electronWindow) {
     this.children = [];
-    this.childrenSinceLastRender = 0;
+    this.didChildrenChange = false;
     this.electronWindow = electronWindow;
     this.instance = null;
   }
@@ -22,6 +22,7 @@ class TouchBar {
     }
 
     this.children.push(child);
+    this.didChildrenChange = true;
   }
 
   insertBefore(newChild, beforeChild) {
@@ -30,6 +31,7 @@ class TouchBar {
       newChild,
       beforeChild,
     });
+    this.didChildrenChange = true;
   }
 
   removeChild(child) {
@@ -37,10 +39,10 @@ class TouchBar {
       children: this.children,
       child,
     });
+    this.didChildrenChange = true;
   }
 
   createInitialInstance() {
-    this.childrenSinceLastRender = this.children.length;
     const nativeChildren = this.children.map(child => child.createInstance());
     const args = {
       items: nativeChildren,
@@ -54,21 +56,18 @@ class TouchBar {
     this.instance = touchBar;
     this.electronWindow.setTouchBar(touchBar);
 
+    this.didChildrenChange = false;
     return this.instance;
   }
 
   updateInstance() {
-    this.childrenSinceLastRender = this.children.length;
     const updatedChildren = this.children.map(child => child.createInstance());
-
+    this.didChildrenChange = false;
     return this.instance;
   }
 
   createInstance() {
-    if (
-      !this.instance
-      || this.childrenSinceLastRender !== this.children.length
-    ) {
+    if (!this.instance || this.didChildrenChange) {
       return this.createInitialInstance();
     }
 

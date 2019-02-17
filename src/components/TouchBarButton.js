@@ -69,7 +69,7 @@ class TouchBarButton {
 
     return {
       ...props,
-      label: buildChild(this.child),
+      label: this.child && buildChild(this.child),
       icon: icon && isValidIcon(icon) ? icon : null,
       click: onClick,
     };

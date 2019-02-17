@@ -16,6 +16,7 @@ class TouchBarScrubber {
     this.props = props;
     this.prevProps = {};
     this.instance = null;
+    this.childrenChanged = false;
   }
 
   updateProps(newProps) {
@@ -28,10 +29,12 @@ class TouchBarScrubber {
       return;
     }
 
+    this.childrenChanged = true;
     this.children.push(child);
   }
 
   insertBefore(newChild, beforeChild) {
+    this.childrenChanged = true;
     this.children = insertBeforeChild({
       children: this.children,
       newChild,
@@ -40,27 +43,36 @@ class TouchBarScrubber {
   }
 
   removeChild(child) {
+    this.childrenChanged = true;
     this.children = removeChild({
       children: this.children,
       child,
     });
   }
 
+  didChildrenChange() {
+    return this.childrenChanged;
+  }
+
+  generateChildrenInstances() {
+    return this.children.map(child => child.createInstance());
+  }
+
   getNativeArgs() {
-    const { children, onChange, onClick, ...props } = this.props;
+    const { children, onSelect, onHighlight, ...props } = this.props;
 
     return {
       ...props,
-      select: onChange,
+      select: onSelect && debounce(onSelect, props.debounceTime || 250),
       // If not debounced, it causes serious performance issues
-      highlight: onClick && debounce(onClick, props.debounceTime || 250),
-      items: this.children.map(child => child.createInstance()),
+      highlight: onHighlight && debounce(onHighlight, props.debounceTime || 250),
+      items: this.generateChildrenInstances(),
     };
   }
 
   createInitialInstance() {
-    this.childrenSinceLastRender = this.children.length;
     const args = this.getNativeArgs();
+    this.childrenSinceLastRender = this.children.length;
 
     // TODO: Electron & remote are needed to support Atom. This is just a workaround.
     this.instance = NativeTouchBar ?
@@ -71,21 +83,33 @@ class TouchBarScrubber {
   }
 
   updateInstance() {
-    this.childrenSinceLastRender = this.children.length;
-
     const args = this.getNativeArgs();
+
+    // Update new/deleted items
+    if (this.didChildrenChange()) {
+      this.instance.items = args.items;
+      this.childrenChanged = false;
+    }
 
     // Update instance.
     Object.keys(args).forEach((key) => {
-      if (key === 'items') { return; }
+      // Avoid updating functions as there's not a really easy way to know if they changed.
+      if (key === 'select' || key === 'highlight') {
+        return;
+      }
+
+      // Items are updated manually.
+      if (key === 'items') {
+        return;
+      }
 
       if (this.instance[key] !== args[key]) {
         this.instance[key] = args[key];
       }
     });
 
-    const updatedChildren = this.children.map(child => child.createInstance());
 
+    this.childrenSinceLastRender = this.children.length;
     return this.instance;
   }
 
@@ -96,7 +120,7 @@ class TouchBarScrubber {
 
     if (
       !this.instance
-      || this.childrenSinceLastRender !== this.children.length
+      // || this.childrenSinceLastRender !== this.children.length
     ) {
       return this.createInitialInstance();
     }
