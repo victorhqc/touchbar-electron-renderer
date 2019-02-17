@@ -18,7 +18,7 @@ export function removeChild({ children, child }) {
 }
 
 export function buildChild(child) {
-  if (isFunction(child.createInstance)) {
+  if (child && isFunction(child.createInstance)) {
     return child.createInstance();
   }
 
