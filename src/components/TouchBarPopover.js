@@ -46,10 +46,11 @@ class TouchBarPopover {
   }
 
   getNativeArgs() {
-    const { children, ...props } = this.props;
+    const { children, hideCloseButton, ...props } = this.props;
 
     return {
       ...props,
+      showCloseButton: hideCloseButton ? false : true, // if `hideCloseButton` is truthy, then `showCloseButton` is false.
       items: this.children.map(child => child.createInstance()),
     };
   }

@@ -59,13 +59,13 @@ class TouchBarScrubber {
   }
 
   getNativeArgs() {
-    const { children, onSelect, onHighlight, ...props } = this.props;
+    const { children, onSelect, onHighlight, debounceTime, ...props } = this.props;
 
     return {
       ...props,
-      select: onSelect && debounce(onSelect, props.debounceTime || 250),
       // If not debounced, it causes serious performance issues
-      highlight: onHighlight && debounce(onHighlight, props.debounceTime || 250),
+      select: onSelect && debounce(onSelect, debounceTime || 250),
+      highlight: onHighlight && debounce(onHighlight, debounceTime || 250),
       items: this.generateChildrenInstances(),
     };
   }

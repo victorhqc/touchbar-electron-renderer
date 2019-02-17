@@ -80,7 +80,7 @@ export default class TouchBarSegmentedControl {
     return {
       ...props,
       change: onChange,
-      selectedColor: selected,
+      selectedIndex: selected,
       segmentStyle: style,
       segments: segments || this.children.map(child => buildChild(child)),
     };

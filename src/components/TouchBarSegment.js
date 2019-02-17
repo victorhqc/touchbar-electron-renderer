@@ -47,11 +47,13 @@ export default class TouchBarSegment {
   getNativeArgs() {
     const {
       children,
+      disabled,
       ...props
     } = this.props;
 
     return {
       ...props,
+      enabled: disabled ? false : true, // When disabled is truthy, then `enabled` is false.
       label: children,
     };
   }
