@@ -60,18 +60,30 @@ class TouchBar {
     return this.instance;
   }
 
+  // TODO: Delete me.
   updateInstance() {
     const updatedChildren = this.children.map(child => child.createInstance());
     this.didChildrenChange = false;
     return this.instance;
   }
 
+  // TODO: Delete me.
   createInstance() {
     if (!this.instance || this.didChildrenChange) {
       return this.createInitialInstance();
     }
 
     return this.updateInstance();
+  }
+
+  refreshTree() {
+    // Only create new touchbar when
+    // - toucbbar is new.
+    // - new nodes were added.
+    // - node down in tree asks for a hard re-render.
+    if (!this.instance || this.didChildrenChange) {
+      return this.createInitialInstance();
+    }
   }
 }
 

@@ -29,12 +29,16 @@ function warnAboutUserInteractions({ type, props, acceptedEvents }) {
 
 class TouchBarButton {
   constructor(props) {
-    this.props = props;
+    this.setProps(props);
     this.id = uuidv4();
 
     // TouchBarButton can have only one child.
     this.child = null;
     this.instance = null;
+  }
+
+  setProps(props) {
+    this.props = props;
   }
 
   /**
@@ -54,8 +58,9 @@ class TouchBarButton {
     this.child = null;
   }
 
-  updateProps(newProps) {
-    this.props = newProps;
+  update({ newProps }) {
+    this.setProps(newProps);
+    this.updateInstance();
   }
 
   getNativeArgs() {
@@ -75,7 +80,18 @@ class TouchBarButton {
     };
   }
 
-  createInitialInstance() {
+  updateInstance() {
+    const args = this.getNativeArgs();
+
+    // Update instance.
+    Object.keys(args).forEach((key) => {
+      if (this.instance[key] !== args[key]) {
+        this.instance[key] = args[key];
+      }
+    });
+  }
+
+  createInstance() {
     const args = this.getNativeArgs();
 
     // TODO: Electron & remote are needed to support Atom. This is just a workaround.
@@ -86,27 +102,6 @@ class TouchBarButton {
     }
 
     return this.instance;
-  }
-
-  updateInstance() {
-    const args = this.getNativeArgs();
-
-    // Update instance.
-    Object.keys(args).forEach((key) => {
-      if (this.instance[key] !== args[key]) {
-        this.instance[key] = args[key];
-      }
-    });
-
-    return this.instance;
-  }
-
-  createInstance() {
-    if (!this.instance) {
-      return this.createInitialInstance();
-    }
-
-    return this.updateInstance();
   }
 }
 

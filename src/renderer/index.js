@@ -32,7 +32,10 @@ const HostConfig = {
 
   },
   resetAfterCommit: function resetAfterCommit(root) {
-    root.createInstance();
+    console.time('RESET AFTER COMMIT');
+    root.refreshTree();
+    // root.createInstance();
+    console.timeEnd('RESET AFTER COMMIT');
   },
   appendChildToContainer: function appendChildToContainer(parent, child) {
     parent.appendChild(child);
@@ -79,7 +82,8 @@ const HostConfig = {
     return undefined;
   },
   commitUpdate: function commitUpdate(instance, updatePayload, type, oldProps, newProps, finishedWork) {
-    instance.updateProps(newProps);
+    // instance.updateProps(newProps);
+    instance.update({ type, newProps, oldProps })
   },
   commitTextUpdate: function commitTextUpdate(textInstance, oldText, newText) {
     textInstance.replaceText(newText);

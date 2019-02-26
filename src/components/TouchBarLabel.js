@@ -2,6 +2,7 @@
 import electron from 'electron';
 import remote from 'remote';
 import uuidv4 from 'uuid/v4';
+import isEqual from 'lodash/isEqual';
 
 import { buildChild } from '../utils';
 
@@ -12,12 +13,16 @@ const { TouchBar: RemoteTouchBar } = remote || {};
 
 class TouchBarLabel {
   constructor(props) {
-    this.props = props;
+    this.setProps(props);
     this.id = uuidv4();
 
     // TouchBarLabel can have only one child.
     this.child = null;
     this.instance = null;
+  }
+
+  setProps(props) {
+    this.props = props;
   }
 
   /**
@@ -37,8 +42,13 @@ class TouchBarLabel {
     this.child = null;
   }
 
-  updateProps(newProps) {
-    this.props = newProps;
+  update({ newProps }) {
+    if (isEqual(newProps, this.props)) {
+      return;
+    }
+
+    this.setProps(newProps);
+    this.updateInstance();
   }
 
   getNativeArgs() {
@@ -78,11 +88,16 @@ class TouchBarLabel {
   }
 
   createInstance() {
-    if (!this.instance) {
-      return this.createInitialInstance();
+    const args = this.getNativeArgs();
+
+    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
+    if (NativeTouchBar) {
+      this.instance = new NativeTouchBar.TouchBarLabel(args);
+    } else {
+      this.instance = new RemoteTouchBar.TouchBarLabel(args);
     }
 
-    return this.updateInstance();
+    return this.instance;
   }
 }
 
