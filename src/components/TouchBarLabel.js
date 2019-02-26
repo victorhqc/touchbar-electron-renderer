@@ -49,6 +49,9 @@ class TouchBarLabel {
 
     this.setProps(newProps);
     this.updateInstance();
+
+    // No rerender needed when props change.
+    return false;
   }
 
   getNativeArgs() {
@@ -59,19 +62,6 @@ class TouchBarLabel {
       textColor: color,
       label: buildChild(this.child),
     };
-  }
-
-  createInitialInstance() {
-    const args = this.getNativeArgs();
-
-    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
-    if (NativeTouchBar) {
-      this.instance = new NativeTouchBar.TouchBarLabel(args);
-    } else {
-      this.instance = new RemoteTouchBar.TouchBarLabel(args);
-    }
-
-    return this.instance;
   }
 
   updateInstance() {

@@ -4,6 +4,7 @@ import difference from 'lodash/difference';
 import { TouchBarText } from '../components';
 import createTouchBarElement from '../createTouchBarElement';
 
+let isReRenderNeeded = false;
 const HostConfig = {
   now: Date.now,
   supportsMutation: true,
@@ -33,7 +34,8 @@ const HostConfig = {
   },
   resetAfterCommit: function resetAfterCommit(root) {
     console.time('RESET AFTER COMMIT');
-    root.refreshTree();
+    root.refreshTree(isReRenderNeeded);
+    isReRenderNeeded = false;
     // root.createInstance();
     console.timeEnd('RESET AFTER COMMIT');
   },
@@ -83,7 +85,11 @@ const HostConfig = {
   },
   commitUpdate: function commitUpdate(instance, updatePayload, type, oldProps, newProps, finishedWork) {
     // instance.updateProps(newProps);
-    instance.update({ type, newProps, oldProps })
+    const forceRerender = instance.update({ type, newProps, oldProps })
+
+    if (forceRerender) {
+      isReRenderNeeded = true;
+    }
   },
   commitTextUpdate: function commitTextUpdate(textInstance, oldText, newText) {
     textInstance.replaceText(newText);

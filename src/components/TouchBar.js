@@ -76,12 +76,12 @@ class TouchBar {
     return this.updateInstance();
   }
 
-  refreshTree() {
+  refreshTree(isReRenderNeeded) {
     // Only create new touchbar when
     // - toucbbar is new.
     // - new nodes were added.
     // - node down in tree asks for a hard re-render.
-    if (!this.instance || this.didChildrenChange) {
+    if (!this.instance || this.didChildrenChange || isReRenderNeeded) {
       return this.createInitialInstance();
     }
   }

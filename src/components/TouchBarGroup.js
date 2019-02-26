@@ -11,13 +11,13 @@ const { TouchBar: RemoteTouchBar } = remote || {};
 class TouchBarGroup {
   constructor(electronWindow) {
     this.children = [];
-    this.childrenSinceLastRender = 0;
+    this.didChildrenChange = false;
     this.electronWindow = electronWindow;
     this.instance = null;
   }
 
-  updateProps(newProps) {
-    this.props = newProps;
+  update() {
+    return this.updateInstance()
   }
 
   appendChild(child) {
@@ -25,6 +25,7 @@ class TouchBarGroup {
       return;
     }
 
+    this.didChildrenChange = true;
     this.children.push(child);
   }
 
@@ -34,6 +35,8 @@ class TouchBarGroup {
       newChild,
       beforeChild,
     });
+
+    this.didChildrenChange = true;
   }
 
   removeChild(child) {
@@ -41,10 +44,23 @@ class TouchBarGroup {
       children: this.children,
       child,
     });
+
+    this.didChildrenChange = true;
   }
 
-  createInitialInstance() {
-    this.childrenSinceLastRender = this.children.length;
+  updateInstance() {
+    let isRerenderNeeded = false;
+    if (this.didChildrenChange) {
+      this.children.map(child => child.createInstance());
+      isRerenderNeeded = true;
+    }
+
+    this.didChildrenChange = false;
+
+    return isRerenderNeeded;
+  }
+
+  createInstance() {
     const nativeChildren = this.children.map(child => child.createInstance());
     const args = {
       items: nativeChildren,
@@ -55,26 +71,8 @@ class TouchBarGroup {
       new NativeTouchBar.TouchBarGroup(args)
       : new RemoteTouchBar.TouchBarGroup(args);
 
+    this.didChildrenChange = false;
     return this.instance;
-  }
-
-  updateInstance() {
-    this.childrenSinceLastRender = this.children.length;
-    const updatedChildren = this.children.map(child => child.createInstance());
-    // this.instance.items = updatedChildren;
-
-    return this.instance;
-  }
-
-  createInstance() {
-    if (
-      !this.instance
-      || this.childrenSinceLastRender !== this.children.length
-    ) {
-      return this.createInitialInstance();
-    }
-
-    return this.updateInstance();
   }
 }
 

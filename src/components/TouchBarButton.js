@@ -61,6 +61,9 @@ class TouchBarButton {
   update({ newProps }) {
     this.setProps(newProps);
     this.updateInstance();
+
+    // No Rerender needed when button props update.
+    return false;
   }
 
   getNativeArgs() {

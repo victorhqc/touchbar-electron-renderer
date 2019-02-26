@@ -74,6 +74,9 @@ class TouchBarColorPicker {
 
     this.setProps(newProps);
     this.updateInstance();
+
+    // No rerender needed when color-picker props change.
+    return false;
   }
 
   getNativeArgs() {
@@ -85,19 +88,6 @@ class TouchBarColorPicker {
       selectedColor: selected,
       availableColors: colors || this.children.map(child => buildChild(child)),
     };
-  }
-
-  createInitialInstance() {
-    const args = this.getNativeArgs();
-
-    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
-    if (NativeTouchBar) {
-      this.instance = new NativeTouchBar.TouchBarColorPicker(args);
-    } else {
-      this.instance = new RemoteTouchBar.TouchBarColorPicker(args);
-    }
-
-    return this.instance;
   }
 
   updateInstance() {
