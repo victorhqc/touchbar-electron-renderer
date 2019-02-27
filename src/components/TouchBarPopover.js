@@ -1,6 +1,7 @@
 // TODO: Electron & remote are needed to support Atom. This is just a workaround.
 import electron from 'electron';
 import remote from 'remote';
+import isEqual from 'lodash/isEqual';
 
 import { insertBeforeChild, removeChild } from '../utils';
 
@@ -11,15 +12,22 @@ const { TouchBar: RemoteTouchBar } = remote || {};
 class TouchBarPopover {
   constructor(props) {
     this.children = [];
-    this.childrenSinceLastRender = 0;
-    this.props = props;
-    this.prevProps = {};
+    this.didChildrenChange = false;
+    this.setProps(props);
     this.instance = null;
   }
 
-  updateProps(newProps) {
-    this.prevProps = Object.assign({}, this.props);
-    this.props = newProps;
+  update({ newProps }) {
+    if (isEqual(newProps, this.props)) {
+      return;
+    }
+
+    this.setProps(newProps);
+    return this.updateInstance();
+  }
+
+  setProps(props) {
+    this.props = props;
   }
 
   appendChild(child) {
@@ -28,6 +36,7 @@ class TouchBarPopover {
     }
 
     this.children.push(child);
+    this.didChildrenChange = true;
   }
 
   insertBefore(newChild, beforeChild) {
@@ -36,6 +45,7 @@ class TouchBarPopover {
       newChild,
       beforeChild,
     });
+    this.didChildrenChange = true;
   }
 
   removeChild(child) {
@@ -43,6 +53,7 @@ class TouchBarPopover {
       children: this.children,
       child,
     });
+    this.didChildrenChange = true;
   }
 
   getNativeArgs() {
@@ -69,6 +80,7 @@ class TouchBarPopover {
 
   updateInstance() {
     this.childrenSinceLastRender = this.children.length;
+    let isRerenderNeeded = false;
 
     const args = this.getNativeArgs();
 
@@ -81,23 +93,26 @@ class TouchBarPopover {
       }
     });
 
-    const updatedChildren = this.children.map(child => child.createInstance());
-    return this.instance;
+    if (this.didChildrenChange) {
+      this.children.map(child => child.createInstance());
+      isRerenderNeeded = true;
+    }
+
+    this.didChildrenChange = false;
+    return isRerenderNeeded;
   }
 
   createInstance() {
-    if (this.props === this.prevProps) {
-      return;
-    }
+    this.childrenSinceLastRender = this.children.length;
+    const args = this.getNativeArgs();
 
-    if (
-      !this.instance
-      || this.childrenSinceLastRender !== this.children.length
-    ) {
-      return this.createInitialInstance();
-    }
+    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
+    this.instance = NativeTouchBar ?
+      new NativeTouchBar.TouchBarPopover(args)
+      : new RemoteTouchBar.TouchBarPopover(args);
 
-    return this.updateInstance();
+    this.didChildrenChange = false;
+    return this.instance;
   }
 }
 
