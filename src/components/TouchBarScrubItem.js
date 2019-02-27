@@ -5,13 +5,19 @@ import { buildChild } from '../utils';
 
 class TouchBarScrubItem {
   constructor(props) {
-    this.props = props;
+    this.setProps(props);
     this.id = uuidv4();
 
     // TouchBarScrubItem can have only one child.
     this.child = null;
     this.instance = null;
   }
+
+  setProps(props) {
+    this.props = props;
+  }
+
+  update() {}
 
   /**
    * TouchBarScrubItem can only have text children.
@@ -28,10 +34,6 @@ class TouchBarScrubItem {
 
   removeChild() {
     this.child = null;
-  }
-
-  updateProps(newProps) {
-    this.props = newProps;
   }
 
   createInstance() {

@@ -314,7 +314,7 @@ For more information go [here](https://electronjs.org/docs/api/touch-bar-scrubbe
 
 **Props**
 - **_children:_** Only `<segment />` elements are valid.
-- **_style:_** String, It'll be mapped to `segmentStyle`, valid styles are:
+- **_segmentStyle:_** String, valid styles are:
   - `automatic` - Default. The appearance of the segmented control is automatically determined based on the type of window in which the control is displayed and the position within the window.
   - `rounded` - The control is displayed using the rounded style.
   - `textured-rounded` - The control is displayed using the textured rounded style.

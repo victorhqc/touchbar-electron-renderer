@@ -56,13 +56,13 @@ class TouchBarPopover {
     this.didChildrenChange = true;
   }
 
-  getNativeArgs() {
+  getNativeArgs(buildItems = true) {
     const { children, hideCloseButton, ...props } = this.props;
 
     return {
       ...props,
       showCloseButton: hideCloseButton ? false : true, // if `hideCloseButton` is truthy, then `showCloseButton` is false.
-      items: this.children.map(child => child.createInstance()),
+      items: buildItems && this.children.map(child => child.createInstance()),
     };
   }
 
@@ -70,7 +70,7 @@ class TouchBarPopover {
     this.childrenSinceLastRender = this.children.length;
     let isRerenderNeeded = false;
 
-    const args = this.getNativeArgs();
+    const args = this.getNativeArgs(false);
 
     // Update instance.
     Object.keys(args).forEach((key) => {

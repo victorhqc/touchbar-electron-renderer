@@ -28,7 +28,7 @@ class TouchBarScrubber {
     }
 
     this.setProps(props);
-    this.updateInstance();
+    return this.updateInstance();
   }
 
   appendChild(child) {
@@ -61,7 +61,7 @@ class TouchBarScrubber {
     return this.children.map(child => child.createInstance());
   }
 
-  getNativeArgs() {
+  getNativeArgs(buildItems = true) {
     const { children, onSelect, onHighlight, debounceTime, ...props } = this.props;
 
     return {
@@ -69,26 +69,14 @@ class TouchBarScrubber {
       // If not debounced, it causes serious performance issues
       select: onSelect && debounce(onSelect, debounceTime || 250),
       highlight: onHighlight && debounce(onHighlight, debounceTime || 250),
-      items: this.generateChildrenInstances(),
+      items: buildItems && this.generateChildrenInstances(),
     };
-  }
-
-  createInitialInstance() {
-    const args = this.getNativeArgs();
-    this.childrenSinceLastRender = this.children.length;
-
-    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
-    this.instance = NativeTouchBar ?
-      new NativeTouchBar.TouchBarScrubber(args)
-      : new RemoteTouchBar.TouchBarScrubber(args);
-
-    return this.instance;
   }
 
   updateInstance() {
     // this.didChildrenChange = true;
     let isRerenderNeeded = false;
-    const args = this.getNativeArgs();
+    const args = this.getNativeArgs(false);
 
     // Update new/deleted items
     if (this.didChildrenChange) {
@@ -98,12 +86,7 @@ class TouchBarScrubber {
     // Update instance.
     Object.keys(args).forEach((key) => {
       // Avoid updating functions as there's not a really easy way to know if they changed.
-      if (key === 'select' || key === 'highlight') {
-        return;
-      }
-
-      // Items are updated manually.
-      if (key === 'items') {
+      if (key === 'select' || key === 'highlight' || key === 'items') {
         return;
       }
 
@@ -113,7 +96,7 @@ class TouchBarScrubber {
     });
 
     this.didChildrenChange = false;
-    return this.instance;
+    return isRerenderNeeded;
   }
 
   createInstance() {

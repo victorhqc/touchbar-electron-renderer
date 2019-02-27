@@ -2,6 +2,7 @@
 import electron from 'electron';
 import remote from 'remote';
 import uuidv4 from 'uuid/v4';
+import isEqual from 'lodash/isEqual';
 
 import { insertBeforeChild, removeChild, buildChild } from '../utils';
 import TouchBarSegment from './TouchBarSegment';
@@ -22,12 +23,25 @@ function isValidChild(child) {
 
 export default class TouchBarSegmentedControl {
   constructor(props) {
-    this.props = props;
-    this.prevProps = {};
+    this.setProps(props);
     this.id = uuidv4();
 
     this.children = [];
     this.instance = null;
+    this.didChildrenChange = false;
+  }
+
+  setProps(props) {
+    this.props = props;
+  }
+
+  update({ newProps }) {
+    if (isEqual(newProps, this.props)) {
+      return;
+    }
+
+    this.setProps(newProps);
+    return this.updateInstance();
   }
 
   /**
@@ -41,6 +55,7 @@ export default class TouchBarSegmentedControl {
     }
 
     this.children.push(child);
+    this.didChildrenChange = true;
   }
 
   insertBefore(newChild, beforeChild) {
@@ -53,6 +68,7 @@ export default class TouchBarSegmentedControl {
       newChild,
       beforeChild,
     });
+    this.didChildrenChange = true;
   }
 
   removeChild(child) {
@@ -60,19 +76,26 @@ export default class TouchBarSegmentedControl {
       children: this.children,
       child,
     });
+    this.didChildrenChange = true;
   }
 
-  updateProps(newProps) {
-    this.prevProps = Object.assign({}, this.props);
-    this.props = newProps;
+  getSegments(buildItems) {
+    if (!buildItems) {
+      return null;
+    }
+
+    if (this.props.segments) {
+      return this.props.segments;
+    }
+
+    return this.children.map(child => buildChild(child));
   }
 
-  getNativeArgs() {
+  getNativeArgs(buildItems = true) {
     const {
       children,
       onChange,
       segments,
-      style,
       selected,
       ...props
     } = this.props;
@@ -81,12 +104,32 @@ export default class TouchBarSegmentedControl {
       ...props,
       change: onChange,
       selectedIndex: selected,
-      segmentStyle: style,
-      segments: segments || this.children.map(child => buildChild(child)),
+      segments: this.getSegments(buildItems),
     };
   }
 
-  createInitialInstance() {
+  updateInstance() {
+    let isRerenderNeeded = false;
+    if(this.didChildrenChange) {
+      isRerenderNeeded = true;
+    }
+
+    const args = this.getNativeArgs(false);
+
+    // Update instance.
+    Object.keys(args).forEach((key) => {
+      if (key === 'items' || key === 'segments') { return; }
+
+      if (this.instance[key] !== args[key]) {
+        this.instance[key] = args[key];
+      }
+    });
+
+    this.didChildrenChange = false;
+    return isRerenderNeeded;
+  }
+
+  createInstance() {
     const args = this.getNativeArgs();
 
     // TODO: Electron & remote are needed to support Atom. This is just a workaround.
@@ -96,31 +139,7 @@ export default class TouchBarSegmentedControl {
       this.instance = new RemoteTouchBar.TouchBarSegmentedControl(args);
     }
 
+    this.didChildrenChange = false;
     return this.instance;
-  }
-
-  updateInstance() {
-    const args = this.getNativeArgs();
-
-    // Update instance.
-    Object.keys(args).forEach((key) => {
-      if (this.instance[key] !== args[key]) {
-        this.instance[key] = args[key];
-      }
-    });
-
-    return this.instance;
-  }
-
-  createInstance() {
-    if (this.props === this.prevProps) {
-      return;
-    }
-
-    if (!this.instance) {
-      return this.createInitialInstance();
-    }
-
-    return this.updateInstance();
   }
 }

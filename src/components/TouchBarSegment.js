@@ -1,16 +1,29 @@
 import uuidv4 from 'uuid/v4';
+import isEqual from 'lodash/isEqual';
 
 import TouchBarText from './TouchBarText';
 import { buildChild } from '../utils';
 
 export default class TouchBarSegment {
   constructor(props) {
-    this.props = props;
-    this.prevProps = {};
+    this.setProps(props);
     this.id = uuidv4();
 
     this.children = null;
     this.instance = null;
+  }
+
+  setProps(props) {
+    this.props = props;
+  }
+
+  update({ newProps }) {
+    if (isEqual(newProps, this.props)) {
+      return
+    }
+
+    this.setProps(props);
+    return this.updateInstance();
   }
 
   // Text can have only one child.
@@ -39,11 +52,6 @@ export default class TouchBarSegment {
     this.children = null;
   }
 
-  updateProps(newProps) {
-    this.prevProps = Object.assign({}, this.props);
-    this.props = newProps;
-  }
-
   getNativeArgs() {
     const {
       children,
@@ -58,17 +66,6 @@ export default class TouchBarSegment {
     };
   }
 
-  createInitialInstance() {
-    const args = this.getNativeArgs();
-
-    this.instance = args;
-
-    return this.instance;
-  }
-
-  // TODO: Updating properties in segment does not trigger an update in TouchBar.
-  // I need a flag to know if a new touchbar needs to be recreated because one of the children
-  // changed.
   updateInstance() {
     const args = this.getNativeArgs();
 
@@ -79,18 +76,14 @@ export default class TouchBarSegment {
       }
     });
 
-    return this.instance;
+    // When an update happens in a segment, a hard re-render is needed*
+    return true;
   }
 
   createInstance() {
-    if (this.props === this.prevProps) {
-      return;
-    }
+    const args = this.getNativeArgs();
 
-    if (!this.instance) {
-      return this.createInitialInstance();
-    }
-
-    return this.updateInstance();
+    this.instance = args;
+    return this.instance;
   }
 }
