@@ -2,6 +2,7 @@
 import electron from 'electron';
 import remote from 'remote';
 import uuidv4 from 'uuid/v4';
+import isEqual from 'lodash/isEqual';
 
 import debounce from 'lodash/debounce';
 
@@ -14,12 +15,25 @@ const { TouchBar: RemoteTouchBar } = remote || {};
 
 class TouchBarSlider {
   constructor(props) {
-    this.props = props;
+    this.setProps(props);
     this.id = uuidv4();
 
     // TouchBarSlider can have only one child.
     this.child = null;
     this.instance = null;
+  }
+
+  setProps(props) {
+    this.props = props;
+  }
+
+  update({ newProps }) {
+    if (isEqual(newProps, this.props)) {
+      return;
+    }
+
+    this.setProps(newProps);
+    return this.updateInstance();
   }
 
   /**
@@ -39,10 +53,6 @@ class TouchBarSlider {
     this.child = null;
   }
 
-  updateProps(newProps) {
-    this.props = newProps;
-  }
-
   getNativeArgs() {
     const { children, onChange, icon, ...props } = this.props;
 
@@ -50,21 +60,8 @@ class TouchBarSlider {
       ...props,
       label: buildChild(this.child),
       // If not debounced, it causes serious performance issues
-      change: onChange && debounce(onChange, props.debounceTime || 250),
+      change: onChange && debounce(onChange, props.debounceTime || 0),
     };
-  }
-
-  createInitialInstance() {
-    const args = this.getNativeArgs();
-
-    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
-    if (NativeTouchBar) {
-      this.instance = new NativeTouchBar.TouchBarSlider(args);
-    } else {
-      this.instance = new RemoteTouchBar.TouchBarSlider(args);
-    }
-
-    return this.instance;
   }
 
   updateInstance() {
@@ -77,15 +74,20 @@ class TouchBarSlider {
       }
     });
 
-    return this.instance;
+    return false;
   }
 
   createInstance() {
-    if (!this.instance) {
-      return this.createInitialInstance();
+    const args = this.getNativeArgs();
+
+    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
+    if (NativeTouchBar) {
+      this.instance = new NativeTouchBar.TouchBarSlider(args);
+    } else {
+      this.instance = new RemoteTouchBar.TouchBarSlider(args);
     }
 
-    return this.updateInstance();
+    return this.instance;
   }
 }
 
