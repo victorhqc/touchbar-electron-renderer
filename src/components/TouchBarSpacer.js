@@ -69,7 +69,6 @@ class TouchBarSpacer {
 
   createInstance() {
     const args = this.getNativeArgs();
-    console.log('ARGS', args)
 
     // TODO: Electron & remote are needed to support Atom. This is just a workaround.
     if (NativeTouchBar) {
