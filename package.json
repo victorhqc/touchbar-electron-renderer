@@ -8,7 +8,7 @@
   "scripts": {
     "compile": "rollup -c",
     "compile:watch": "rollup -c --watch",
-    "release": "compile && np"
+    "release": "npm run compile && np"
   },
   "repository": {
     "type": "git",
