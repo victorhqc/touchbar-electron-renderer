@@ -51,8 +51,8 @@ class TouchBarGroup {
   updateInstance() {
     let isRerenderNeeded = false;
     if (this.didChildrenChange) {
-      this.children.map(child => child.createInstance());
       isRerenderNeeded = true;
+      // this.children.map(child => child.createInstance());
     }
 
     this.didChildrenChange = false;

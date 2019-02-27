@@ -66,18 +66,6 @@ class TouchBarPopover {
     };
   }
 
-  createInitialInstance() {
-    this.childrenSinceLastRender = this.children.length;
-    const args = this.getNativeArgs();
-
-    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
-    this.instance = NativeTouchBar ?
-      new NativeTouchBar.TouchBarPopover(args)
-      : new RemoteTouchBar.TouchBarPopover(args);
-
-    return this.instance;
-  }
-
   updateInstance() {
     this.childrenSinceLastRender = this.children.length;
     let isRerenderNeeded = false;
@@ -94,7 +82,7 @@ class TouchBarPopover {
     });
 
     if (this.didChildrenChange) {
-      this.children.map(child => child.createInstance());
+      // this.children.map(child => child.createInstance());
       isRerenderNeeded = true;
     }
 

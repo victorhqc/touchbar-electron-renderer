@@ -2,6 +2,7 @@
 import electron from 'electron';
 import remote from 'remote';
 import debounce from 'lodash/debounce';
+import isEqual from 'lodash/isEqual';
 
 import { insertBeforeChild, removeChild } from '../utils';
 
@@ -11,17 +12,23 @@ const { TouchBar: RemoteTouchBar } = remote || {};
 
 class TouchBarScrubber {
   constructor(props) {
+    this.setProps(props);
     this.children = [];
-    this.childrenSinceLastRender = 0;
-    this.props = props;
-    this.prevProps = {};
+    this.didChildrenChange = false;
     this.instance = null;
-    this.childrenChanged = false;
   }
 
-  updateProps(newProps) {
-    this.prevProps = Object.assign({}, this.props);
-    this.props = newProps;
+  setProps(props) {
+    this.props = props;
+  }
+
+  update({ newProps }) {
+    if (isEqual(newProps, this.props)) {
+      return;
+    }
+
+    this.setProps(props);
+    this.updateInstance();
   }
 
   appendChild(child) {
@@ -29,12 +36,12 @@ class TouchBarScrubber {
       return;
     }
 
-    this.childrenChanged = true;
+    this.didChildrenChange = true;
     this.children.push(child);
   }
 
   insertBefore(newChild, beforeChild) {
-    this.childrenChanged = true;
+    this.didChildrenChange = true;
     this.children = insertBeforeChild({
       children: this.children,
       newChild,
@@ -43,15 +50,11 @@ class TouchBarScrubber {
   }
 
   removeChild(child) {
-    this.childrenChanged = true;
+    this.didChildrenChange = true;
     this.children = removeChild({
       children: this.children,
       child,
     });
-  }
-
-  didChildrenChange() {
-    return this.childrenChanged;
   }
 
   generateChildrenInstances() {
@@ -83,12 +86,13 @@ class TouchBarScrubber {
   }
 
   updateInstance() {
+    // this.didChildrenChange = true;
+    let isRerenderNeeded = false;
     const args = this.getNativeArgs();
 
     // Update new/deleted items
-    if (this.didChildrenChange()) {
-      this.instance.items = args.items;
-      this.childrenChanged = false;
+    if (this.didChildrenChange) {
+      isRerenderNeeded = true;
     }
 
     // Update instance.
@@ -108,24 +112,20 @@ class TouchBarScrubber {
       }
     });
 
-
-    this.childrenSinceLastRender = this.children.length;
+    this.didChildrenChange = false;
     return this.instance;
   }
 
   createInstance() {
-    if (this.props === this.prevProps) {
-      return;
-    }
+    const args = this.getNativeArgs();
+    this.childrenSinceLastRender = this.children.length;
 
-    if (
-      !this.instance
-      // || this.childrenSinceLastRender !== this.children.length
-    ) {
-      return this.createInitialInstance();
-    }
+    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
+    this.instance = NativeTouchBar ?
+      new NativeTouchBar.TouchBarScrubber(args)
+      : new RemoteTouchBar.TouchBarScrubber(args);
 
-    return this.updateInstance();
+    return this.instance;
   }
 }
 
