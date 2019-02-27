@@ -17,6 +17,11 @@ import { app, BrowserWindow, TouchBar } from 'electron';
 import React, { Component, Fragment } from 'react';
 import { ReactTouchBar, TouchBar } from 'touchbar-electron-renderer';
 
+const getRandomValue = () => {
+  const values = ['🍒', '💎', '7️⃣', '🍊', '🔔', '⭐', '🍇', '🍀']
+  return values[Math.floor(Math.random() * values.length)]
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
