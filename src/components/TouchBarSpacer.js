@@ -2,6 +2,7 @@
 import electron from 'electron';
 import remote from 'remote';
 import uuidv4 from 'uuid/v4';
+import isEqual from 'lodash/isEqual';
 
 // TODO: Electron & remote are needed to support Atom. This is just a workaround.
 const { TouchBar: NativeTouchBar } = electron || {};
@@ -25,10 +26,23 @@ const getSize = ({ small, large, flexible }) => {
 
 class TouchBarSpacer {
   constructor(props) {
-    this.props = props;
+    this.setProps(props);
     this.id = uuidv4();
 
     this.instance = null;
+  }
+
+  setProps(props) {
+    this.props = props;
+  }
+
+  update({ newProps }) {
+    if (isEqual(newProps, this.props)) {
+      return;
+    }
+
+    this.setProps(newProps);
+    return this.updateInstance();
   }
 
   appendChild() {}
@@ -36,10 +50,6 @@ class TouchBarSpacer {
   insertBefore() {}
 
   removeChild() {}
-
-  updateProps(newProps) {
-    this.props = newProps;
-  }
 
   getNativeArgs() {
     const { size, small, large, flexible, ...props } = this.props;
@@ -52,8 +62,14 @@ class TouchBarSpacer {
     };
   }
 
-  createInitialInstance() {
+  updateInstance() {
+    // Hard re-render needed.
+    return true;
+  }
+
+  createInstance() {
     const args = this.getNativeArgs();
+    console.log('ARGS', args)
 
     // TODO: Electron & remote are needed to support Atom. This is just a workaround.
     if (NativeTouchBar) {
@@ -63,27 +79,6 @@ class TouchBarSpacer {
     }
 
     return this.instance;
-  }
-
-  updateInstance() {
-    const args = this.getNativeArgs();
-
-    // Update instance.
-    Object.keys(args).forEach((key) => {
-      if (this.instance[key] !== args[key]) {
-        this.instance[key] = args[key];
-      }
-    });
-
-    return this.instance;
-  }
-
-  createInstance() {
-    if (!this.instance) {
-      return this.createInitialInstance();
-    }
-
-    return this.updateInstance();
   }
 }
 
