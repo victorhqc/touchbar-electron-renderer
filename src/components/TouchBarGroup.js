@@ -1,12 +1,4 @@
-// TODO: Electron & remote are needed to support Atom. This is just a workaround.
-import electron from 'electron';
-import remote from 'remote';
-
-import { insertBeforeChild, removeChild } from '../utils';
-
-// TODO: Electron & remote are needed to support Atom. This is just a workaround.
-const { TouchBar: NativeTouchBar } = electron || {};
-const { TouchBar: RemoteTouchBar } = remote || {};
+import { insertBeforeChild, removeChild, getNativeTouchBar } from '../utils';
 
 class TouchBarGroup {
   constructor(electronWindow) {
@@ -66,10 +58,8 @@ class TouchBarGroup {
       items: nativeChildren,
     };
 
-    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
-    this.instance = NativeTouchBar ?
-      new NativeTouchBar.TouchBarGroup(args)
-      : new RemoteTouchBar.TouchBarGroup(args);
+    const NativeTouchBar = getNativeTouchBar();
+    this.instance = new NativeTouchBar.TouchBarGroup(args);
 
     this.didChildrenChange = false;
     return this.instance;

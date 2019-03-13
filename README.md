@@ -13,7 +13,7 @@ npm i touchbar-electron-renderer --save
 Create a simple touchbar interface.
 
 ```js
-import { app, BrowserWindow, TouchBar } from 'electron';
+import { app, BrowserWindow, TouchBar as NativeTouchBar } from 'electron';
 import React, { Component, Fragment } from 'react';
 import { ReactTouchBar, TouchBar } from 'touchbar-electron-renderer';
 
@@ -123,7 +123,7 @@ class App extends Component {
 }
 
 function render() {
-  ReactTouchBar.render(<App />, new TouchBar(window));
+  ReactTouchBar.render(<App />, new TouchBar(window, NativeTouchBar));
 }
 
 let window;

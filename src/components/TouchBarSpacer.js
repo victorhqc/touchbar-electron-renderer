@@ -1,12 +1,6 @@
-// TODO: Electron & remote are needed to support Atom. This is just a workaround.
-import electron from 'electron';
-import remote from 'remote';
 import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
-
-// TODO: Electron & remote are needed to support Atom. This is just a workaround.
-const { TouchBar: NativeTouchBar } = electron || {};
-const { TouchBar: RemoteTouchBar } = remote || {};
+import { getNativeTouchBar } from '../utils';
 
 const getSize = ({ small, large, flexible }) => {
   if (small) {
@@ -70,13 +64,8 @@ class TouchBarSpacer {
   createInstance() {
     const args = this.getNativeArgs();
 
-    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
-    if (NativeTouchBar) {
-      this.instance = new NativeTouchBar.TouchBarSpacer(args);
-    } else {
-      this.instance = new RemoteTouchBar.TouchBarSpacer(args);
-    }
-
+    const NativeTouchBar = getNativeTouchBar();
+    this.instance = new NativeTouchBar.TouchBarSpacer(args);
     return this.instance;
   }
 }

@@ -1,15 +1,8 @@
-// TODO: Electron & remote are needed to support Atom. This is just a workaround.
-import electron from 'electron';
-import remote from 'remote';
 import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 
-import { insertBeforeChild, removeChild, buildChild } from '../utils';
+import { insertBeforeChild, removeChild, buildChild, getNativeTouchBar } from '../utils';
 import TouchBarColor from './TouchBarColor';
-
-// TODO: Electron & remote are needed to support Atom. This is just a workaround.
-const { TouchBar: NativeTouchBar } = electron || {};
-const { TouchBar: RemoteTouchBar } = remote || {};
 
 function isValidChild(child) {
   if (!child) { return false; }
@@ -106,12 +99,8 @@ class TouchBarColorPicker {
   createInstance() {
     const args = this.getNativeArgs();
 
-    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
-    if (NativeTouchBar) {
-      this.instance = new NativeTouchBar.TouchBarColorPicker(args);
-    } else {
-      this.instance = new RemoteTouchBar.TouchBarColorPicker(args);
-    }
+    const NativeTouchBar = getNativeTouchBar();
+    this.instance = new NativeTouchBar.TouchBarColorPicker(args);
 
     return this.instance;
   }

@@ -1,18 +1,10 @@
-// TODO: Electron & remote are needed to support Atom. This is just a workaround.
-import electron from 'electron';
-import remote from 'remote';
 import uuidv4 from 'uuid/v4';
 
 import difference from 'lodash/difference';
 import some from 'lodash/some';
 
 import { MOUSE_EVENTS } from '../constants';
-import { buildChild, isValidIcon } from '../utils';
-
-
-// TODO: Electron & remote are needed to support Atom. This is just a workaround.
-const { TouchBar: NativeTouchBar } = electron || {};
-const { TouchBar: RemoteTouchBar } = remote || {};
+import { buildChild, isValidIcon, getNativeTouchBar } from '../utils';
 
 function warnAboutUserInteractions({ type, props, acceptedEvents }) {
   const notValidEvents = difference(MOUSE_EVENTS, acceptedEvents);
@@ -97,13 +89,8 @@ class TouchBarButton {
   createInstance() {
     const args = this.getNativeArgs();
 
-    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
-    if (NativeTouchBar) {
-      this.instance = new NativeTouchBar.TouchBarButton(args);
-    } else {
-      this.instance = new RemoteTouchBar.TouchBarButton(args);
-    }
-
+    const NativeTouchBar = getNativeTouchBar();
+    this.instance = new NativeTouchBar.TouchBarButton(args);
     return this.instance;
   }
 }

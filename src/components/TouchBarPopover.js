@@ -1,13 +1,6 @@
-// TODO: Electron & remote are needed to support Atom. This is just a workaround.
-import electron from 'electron';
-import remote from 'remote';
 import isEqual from 'lodash/isEqual';
 
-import { insertBeforeChild, removeChild } from '../utils';
-
-// TODO: Electron & remote are needed to support Atom. This is just a workaround.
-const { TouchBar: NativeTouchBar } = electron || {};
-const { TouchBar: RemoteTouchBar } = remote || {};
+import { insertBeforeChild, removeChild, getNativeTouchBar } from '../utils';
 
 class TouchBarPopover {
   constructor(props) {
@@ -82,7 +75,6 @@ class TouchBarPopover {
     });
 
     if (this.didChildrenChange) {
-      // this.children.map(child => child.createInstance());
       isRerenderNeeded = true;
     }
 
@@ -94,10 +86,8 @@ class TouchBarPopover {
     this.childrenSinceLastRender = this.children.length;
     const args = this.getNativeArgs();
 
-    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
-    this.instance = NativeTouchBar ?
-      new NativeTouchBar.TouchBarPopover(args)
-      : new RemoteTouchBar.TouchBarPopover(args);
+    const NativeTouchBar = getNativeTouchBar();
+    this.instance = new NativeTouchBar.TouchBarPopover(args);
 
     this.didChildrenChange = false;
     return this.instance;

@@ -1,15 +1,7 @@
-// TODO: Electron & remote are needed to support Atom. This is just a workaround.
-import electron from 'electron';
-import remote from 'remote';
 import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 
-import { buildChild } from '../utils';
-
-
-// TODO: Electron & remote are needed to support Atom. This is just a workaround.
-const { TouchBar: NativeTouchBar } = electron || {};
-const { TouchBar: RemoteTouchBar } = remote || {};
+import { buildChild, getNativeTouchBar } from '../utils';
 
 class TouchBarLabel {
   constructor(props) {
@@ -80,13 +72,8 @@ class TouchBarLabel {
   createInstance() {
     const args = this.getNativeArgs();
 
-    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
-    if (NativeTouchBar) {
-      this.instance = new NativeTouchBar.TouchBarLabel(args);
-    } else {
-      this.instance = new RemoteTouchBar.TouchBarLabel(args);
-    }
-
+    const NativeTouchBar = getNativeTouchBar();
+    this.instance = new NativeTouchBar.TouchBarLabel(args);
     return this.instance;
   }
 }

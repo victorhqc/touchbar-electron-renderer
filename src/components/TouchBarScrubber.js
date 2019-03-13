@@ -1,14 +1,7 @@
-// TODO: Electron & remote are needed to support Atom. This is just a workaround.
-import electron from 'electron';
-import remote from 'remote';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 
-import { insertBeforeChild, removeChild } from '../utils';
-
-// TODO: Electron & remote are needed to support Atom. This is just a workaround.
-const { TouchBar: NativeTouchBar } = electron || {};
-const { TouchBar: RemoteTouchBar } = remote || {};
+import { insertBeforeChild, removeChild, getNativeTouchBar } from '../utils';
 
 class TouchBarScrubber {
   constructor(props) {
@@ -103,10 +96,8 @@ class TouchBarScrubber {
     const args = this.getNativeArgs();
     this.childrenSinceLastRender = this.children.length;
 
-    // TODO: Electron & remote are needed to support Atom. This is just a workaround.
-    this.instance = NativeTouchBar ?
-      new NativeTouchBar.TouchBarScrubber(args)
-      : new RemoteTouchBar.TouchBarScrubber(args);
+    const NativeTouchBar = getNativeTouchBar();
+    this.instance = new NativeTouchBar.TouchBarScrubber(args);
 
     return this.instance;
   }
