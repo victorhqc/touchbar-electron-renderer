@@ -59,7 +59,9 @@
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-local-resolve": "^1.0.7",
     "rollup-plugin-node-resolve": "^5.1.0",
-    "rollup-plugin-peer-deps-external": "^2.2.0"
+    "rollup-plugin-peer-deps-external": "^2.2.0",
+    "rollup-plugin-typescript2": "^0.21.2",
+    "typescript": "^3.5.2"
   },
   "peerDependencies": {
     "electron": "^4.0.4",

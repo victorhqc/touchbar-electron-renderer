@@ -6,6 +6,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import filesize from 'rollup-plugin-filesize';
 import localResolve from 'rollup-plugin-local-resolve';
 import json from 'rollup-plugin-json';
+import typescript from 'rollup-plugin-typescript2';
 
 import pkg from './package.json';
 
@@ -25,8 +26,8 @@ const config = {
     autoExternal(),
     peerDepsExternal(),
     json(),
-    babel({
-      exclude: './node_modules/**',
+    typescript({
+      typescript: require('typescript'),
     }),
     localResolve(),
     resolve(),
