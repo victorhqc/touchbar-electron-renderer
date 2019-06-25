@@ -1,9 +1,15 @@
-import electron from 'electron';
+import { TouchBar as TouchBarType, BrowserWindow } from 'electron';
 
 import { insertBeforeChild, removeChild, setNativeTouchBar, getNativeTouchBar } from '../utils';
+import { TouchbarElement } from './types'
 
 class TouchBar {
-  constructor(electronWindow, NativeTouchBar) {
+  children: TouchbarElement[];
+  didChildrenChange: boolean;
+  electronWindow: BrowserWindow;
+  instance: TouchBarType;
+
+  constructor(electronWindow: BrowserWindow, NativeTouchBar: TouchBarType) {
     this.children = [];
     this.didChildrenChange = false;
     this.electronWindow = electronWindow;
@@ -11,7 +17,7 @@ class TouchBar {
     setNativeTouchBar(NativeTouchBar);
   }
 
-  appendChild(child) {
+  appendChild(child: TouchbarElement) {
     if (!child) {
       return;
     }
@@ -20,7 +26,7 @@ class TouchBar {
     this.didChildrenChange = true;
   }
 
-  insertBefore(newChild, beforeChild) {
+  insertBefore(newChild: TouchbarElement, beforeChild: TouchbarElement) {
     this.children = insertBeforeChild({
       children: this.children,
       newChild,
@@ -29,7 +35,7 @@ class TouchBar {
     this.didChildrenChange = true;
   }
 
-  removeChild(child) {
+  removeChild(child: TouchbarElement) {
     this.children = removeChild({
       children: this.children,
       child,
@@ -53,7 +59,7 @@ class TouchBar {
 
   // TODO: Delete me.
   updateInstance() {
-    const updatedChildren = this.children.map(child => child.createInstance());
+    this.children.map(child => child.createInstance());
     this.didChildrenChange = false;
     return this.instance;
   }
@@ -67,7 +73,7 @@ class TouchBar {
     return this.updateInstance();
   }
 
-  refreshTree(isReRenderNeeded) {
+  refreshTree(isReRenderNeeded: boolean) {
     // Only create new touchbar when
     // - toucbbar is new.
     // - new nodes were added.
