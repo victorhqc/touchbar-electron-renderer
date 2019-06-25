@@ -7,7 +7,7 @@ class TouchBar {
   children: TouchbarElement[];
   didChildrenChange: boolean;
   electronWindow: BrowserWindow;
-  instance: TouchBarType;
+  instance: Maybe<TouchBarType>;
 
   constructor(electronWindow: BrowserWindow, NativeTouchBar: TouchBarType) {
     this.children = [];

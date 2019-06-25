@@ -1,27 +1,16 @@
+import { NativeImage } from 'electron'
 import uuidv4 from 'uuid/v4';
 
-import difference from 'lodash/difference';
-import some from 'lodash/some';
-
-import { MOUSE_EVENTS } from '../constants';
-import { buildChild, isValidIcon, getNativeTouchBar } from '../utils';
-
-function warnAboutUserInteractions({ type, props, acceptedEvents }) {
-  const notValidEvents = difference(MOUSE_EVENTS, acceptedEvents);
-
-  some(props, (prop) => {
-    if (notValidEvents.indexOf(prop) >= 0) {
-      console.warn(`${element} does not support event: ${prop}`);
-      return true;
-    }
-
-    return false;
-  });
-}
+import { buildChild, getNativeTouchBar } from '../utils';
 
 class TouchBarButton {
-  constructor(props) {
-    this.setProps(props);
+  id: string;
+  props: TouchBarButtonProps;
+  child: Maybe<string>;
+  instance: Maybe<TouchBarButton>;
+
+  constructor(props: TouchBarButtonProps) {
+    this.props = props;
     this.id = uuidv4();
 
     // TouchBarButton can have only one child.
@@ -29,20 +18,16 @@ class TouchBarButton {
     this.instance = null;
   }
 
-  setProps(props) {
-    this.props = props;
-  }
-
   /**
    * TouchBarButton can only have text children.
    * @param  {stting} child
    * @return {void}
    */
-  appendChild(child) {
+  appendChild(child: string): void {
     this.child = child;
   }
 
-  insertBefore(child) {
+  insertBefore(child: string) {
     return this.appendChild(child);
   }
 
@@ -50,8 +35,8 @@ class TouchBarButton {
     this.child = null;
   }
 
-  update({ newProps }) {
-    this.setProps(newProps);
+  update({ newProps }: { newProps: TouchBarButtonProps }) {
+    this.props = newProps;
     this.updateInstance();
 
     // No Rerender needed when button props update.
@@ -59,18 +44,18 @@ class TouchBarButton {
   }
 
   getNativeArgs() {
-    const { children, onClick, icon, ...props } = this.props;
-
-    warnAboutUserInteractions({
-      acceptedEvents: ['onClick'],
-      type: 'button',
-      props,
-    });
+    const {
+      // TODO: check if this is needed.
+      // children,
+      onClick,
+      icon,
+      ...props
+    } = this.props;
 
     return {
       ...props,
       label: this.child && buildChild(this.child),
-      icon: icon && isValidIcon(icon) ? icon : null,
+      icon,
       click: onClick,
     };
   }
@@ -80,6 +65,8 @@ class TouchBarButton {
 
     // Update instance.
     Object.keys(args).forEach((key) => {
+      if (!this.instance) return;
+
       if (this.instance[key] !== args[key]) {
         this.instance[key] = args[key];
       }
@@ -96,3 +83,9 @@ class TouchBarButton {
 }
 
 export default TouchBarButton;
+
+export interface TouchBarButtonProps {
+  onClick: MaybeUndefined<() => void>,
+  icon: Maybe<NativeImage>,
+  // children: MaybeUndefined<string[]>
+}
