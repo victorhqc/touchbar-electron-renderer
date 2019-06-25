@@ -1,20 +1,20 @@
-import { NativeImage } from 'electron'
+import { NativeImage, TouchBarButton as TouchBarNativeButton, TouchBarButtonConstructorOptions } from 'electron'
 import uuidv4 from 'uuid/v4';
 
-import { buildChild, getNativeTouchBar } from '../utils';
+import { getNativeTouchBar } from '../utils';
 
 class TouchBarButton {
   id: string;
   props: TouchBarButtonProps;
-  child: Maybe<string>;
-  instance: Maybe<TouchBarButton>;
+  child?: string;
+  instance: Maybe<NativeTouchBarWithIndex>;
 
   constructor(props: TouchBarButtonProps) {
     this.props = props;
     this.id = uuidv4();
 
     // TouchBarButton can have only one child.
-    this.child = null;
+    this.child = undefined;
     this.instance = null;
   }
 
@@ -32,7 +32,7 @@ class TouchBarButton {
   }
 
   removeChild() {
-    this.child = null;
+    this.child = undefined;
   }
 
   update({ newProps }: { newProps: TouchBarButtonProps }) {
@@ -43,19 +43,17 @@ class TouchBarButton {
     return false;
   }
 
-  getNativeArgs() {
+  getNativeArgs(): TouchBarConstructorOptionsWithIndex {
     const {
       // TODO: check if this is needed.
       // children,
       onClick,
-      icon,
       ...props
     } = this.props;
 
     return {
       ...props,
-      label: this.child && buildChild(this.child),
-      icon,
+      label: this.child,
       click: onClick,
     };
   }
@@ -77,6 +75,8 @@ class TouchBarButton {
     const args = this.getNativeArgs();
 
     const NativeTouchBar = getNativeTouchBar();
+    if (!NativeTouchBar) return null;
+
     this.instance = new NativeTouchBar.TouchBarButton(args);
     return this.instance;
   }
@@ -85,7 +85,18 @@ class TouchBarButton {
 export default TouchBarButton;
 
 export interface TouchBarButtonProps {
-  onClick: MaybeUndefined<() => void>,
-  icon: Maybe<NativeImage>,
+  onClick?:() => void,
+  icon?: NativeImage,
+  IconPosition?:IconPosition,
+  backgroundColor?: string
   // children: MaybeUndefined<string[]>
 }
+
+export enum IconPosition {
+  Left = 'left',
+  Right = 'right',
+  Overlay = 'overlay'
+};
+
+interface TouchBarConstructorOptionsWithIndex extends TouchBarButtonConstructorOptions, WithIndex {}
+interface NativeTouchBarWithIndex extends TouchBarNativeButton, WithIndex {}
