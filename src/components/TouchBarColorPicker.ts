@@ -1,39 +1,41 @@
 import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
+import { TouchBarColorPicker as NativeTouchBarColorPicker, TouchBarColorPickerConstructorOptions } from 'electron';
 
-import { insertBeforeChild, removeChild, buildChild, getNativeTouchBar } from '../utils';
+import { insertBeforeChild, removeChild, getNativeTouchBar } from '../utils';
 import TouchBarColor from './TouchBarColor';
+import { TouchbarElement } from './types';
 
-function isValidChild(child) {
-  if (!child) { return false; }
-  if ( !child instanceof TouchBarColor && typeof child !== 'string') {
-    console.warn('<color-picker /> Can only have <color /> or text as children.');
+function isValidChild(child: TouchBarColor) {
+  if (!child as any instanceof TouchBarColor) {
+    console.warn('<color-picker /> Can only have <color /> as children.');
     return false;
   }
 
   return true;
 }
 
-class TouchBarColorPicker {
-  constructor(props) {
-    this.setProps(props);
+class TouchBarColorPicker implements TouchbarElement<Maybe<NativeTouchBarColorPicker>> {
+  props: TouchBarColorPickerProps;
+  id: string;
+  children: TouchBarColor[];
+  instance: Maybe<NativeTouchBarColorPickerWithIndex>;
+
+  constructor({ children, ...props }: TouchBarColorPickerProps) {
+    this.props = props;
     this.id = uuidv4();
 
-    this.children = [];
+    this.children = children || [];
     this.instance = null;
   }
 
-  setProps(props) {
-    // this.prevProps = Object.assign({}, this.props);
-    this.props = props;
-  }
 
   /**
    * TouchBarColorPicker can only have <color /> children.
    * @param  {stting} child
    * @return {void}
    */
-  appendChild(child) {
+  appendChild(child: TouchBarColor): void {
     if (!isValidChild(child)) {
       return;
     }
@@ -41,8 +43,8 @@ class TouchBarColorPicker {
     this.children.push(child);
   }
 
-  insertBefore(newChild, beforeChild) {
-    if (!isValidChild(child)) {
+  insertBefore(newChild: TouchBarColor, beforeChild: TouchBarColor) {
+    if (!isValidChild(newChild)) {
       return;
     }
 
@@ -53,33 +55,34 @@ class TouchBarColorPicker {
     });
   }
 
-  removeChild(child) {
+  removeChild(child: TouchBarColor) {
     this.children = removeChild({
       children: this.children,
       child,
     });
   }
 
-  update({ newProps }) {
+  update({ newProps }: { newProps: TouchBarColorPickerProps }) {
     if (isEqual(newProps, this.props)) {
       return;
     }
 
-    this.setProps(newProps);
+    this.props = newProps;
     this.updateInstance();
 
     // No rerender needed when color-picker props change.
     return false;
   }
 
-  getNativeArgs() {
-    const { children, onChange, colors, selected, ...props } = this.props;
+  getNativeArgs(): TouchBarColorPickerConstructorOptionsWithIndex {
+    const { children, onChange, selected, ...props } = this.props;
 
     return {
       ...props,
       change: onChange,
       selectedColor: selected,
-      availableColors: colors || this.children.map(child => buildChild(child)),
+      availableColors: this.children
+        .map(child => child.createInstance())
     };
   }
 
@@ -88,7 +91,7 @@ class TouchBarColorPicker {
 
     // Update instance.
     Object.keys(args).forEach((key) => {
-      if (this.instance[key] !== args[key]) {
+      if (this.instance && this.instance[key] !== args[key]) {
         this.instance[key] = args[key];
       }
     });
@@ -100,6 +103,8 @@ class TouchBarColorPicker {
     const args = this.getNativeArgs();
 
     const NativeTouchBar = getNativeTouchBar();
+    if (!NativeTouchBar) return null;
+
     this.instance = new NativeTouchBar.TouchBarColorPicker(args);
 
     return this.instance;
@@ -107,3 +112,12 @@ class TouchBarColorPicker {
 }
 
 export default TouchBarColorPicker;
+
+interface TouchBarColorPickerProps {
+  selected?: string;
+  children?: TouchBarColor[];
+  onChange?: (color: string) => void
+}
+
+interface NativeTouchBarColorPickerWithIndex extends NativeTouchBarColorPicker, WithIndex {}
+interface TouchBarColorPickerConstructorOptionsWithIndex extends TouchBarColorPickerConstructorOptions, WithIndex {}

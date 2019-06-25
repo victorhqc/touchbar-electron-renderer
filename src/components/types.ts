@@ -1,3 +1,4 @@
-export interface TouchbarElement {
-  createInstance(): Function;
+export interface TouchbarElement<T> {
+  id: string;
+  createInstance: () => T;
 }

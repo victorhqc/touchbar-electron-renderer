@@ -1,26 +1,24 @@
 import uuidv4 from 'uuid/v4';
 
-class TouchBarText {
-  constructor(text) {
+import { TouchbarElement } from './types';
+
+class TouchBarText implements TouchbarElement<string> {
+  id: string;
+  text: Maybe<string>;
+
+  constructor(text: string) {
     this.id = uuidv4();
-    this.appendChild(text);
-  }
-
-  // Text can have only one child.
-  appendChild(text) {
-    if (!text || typeof text !== 'string') {
-      return;
-    }
-
     this.text = text;
   }
 
-  insertBefore(text) {
-    return this.appendChild(text);
+  insertBefore(text: string) {
+    this.text = text;
+    return this.text;
   }
 
-  replaceText(text) {
-    return this.appendChild(text);
+  replaceText(text: string) {
+    this.text = text;
+    return this.text;
   }
 
   removeChild() {
@@ -28,7 +26,7 @@ class TouchBarText {
   }
 
   createInstance() {
-    return this.text;
+    return this.text || '';
   }
 }
 

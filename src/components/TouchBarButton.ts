@@ -7,7 +7,7 @@ class TouchBarButton {
   id: string;
   props: TouchBarButtonProps;
   child?: string;
-  instance: Maybe<NativeTouchBarWithIndex>;
+  instance: Maybe<NativeTouchBarButtonWithIndex>;
 
   constructor(props: TouchBarButtonProps) {
     this.props = props;
@@ -99,4 +99,4 @@ export enum IconPosition {
 };
 
 interface TouchBarConstructorOptionsWithIndex extends TouchBarButtonConstructorOptions, WithIndex {}
-interface NativeTouchBarWithIndex extends TouchBarNativeButton, WithIndex {}
+interface NativeTouchBarButtonWithIndex extends TouchBarNativeButton, WithIndex {}
