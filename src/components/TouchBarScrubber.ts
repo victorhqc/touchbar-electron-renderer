@@ -1,68 +1,78 @@
+import { TouchBarScrubber as NativeTouchBarScrubber, TouchBarScrubberConstructorOptions, ScrubberItem } from 'electron';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
+import uuidv4 from 'uuid/v4';
 
 import { insertBeforeChild, removeChild, getNativeTouchBar } from '../utils';
+import TouchBarScrubItem from './TouchBarScrubItem';
+import { TouchbarElement } from './types';
 
-class TouchBarScrubber {
-  constructor(props) {
-    this.setProps(props);
-    this.children = [];
+const nop = () => {};
+
+class TouchBarScrubber implements TouchbarElement<Maybe<NativeTouchBarScrubber>> {
+  id: string;
+  props: TouchBarScrubberProps;
+  didChildrenChange: boolean;
+  instance: Maybe<NativeTouchBarScrubberIndex>;
+  builtChildrenInstances: ScrubberItem[];
+
+  constructor(props: TouchBarScrubberProps) {
+    this.id = uuidv4();
+    this.props = props;
     this.didChildrenChange = false;
     this.instance = null;
+    this.builtChildrenInstances = [];
   }
 
-  setProps(props) {
-    this.props = props;
-  }
-
-  update({ newProps }) {
+  update({ newProps }: { newProps: TouchBarScrubberProps }) {
     if (isEqual(newProps, this.props)) {
       return;
     }
 
-    this.setProps(props);
+    this.props = newProps;
     return this.updateInstance();
   }
 
-  appendChild(child) {
-    if (!child) {
-      return;
-    }
-
+  appendChild(child: TouchBarScrubItem) {
     this.didChildrenChange = true;
-    this.children.push(child);
+    (this.props.children || []).push(child);
   }
 
-  insertBefore(newChild, beforeChild) {
+  insertBefore(newChild: TouchBarScrubItem, beforeChild: TouchBarScrubItem) {
     this.didChildrenChange = true;
-    this.children = insertBeforeChild({
-      children: this.children,
+    this.props.children = insertBeforeChild({
+      children: this.props.children || [],
       newChild,
       beforeChild,
     });
   }
 
-  removeChild(child) {
+  removeChild(child: TouchBarScrubItem) {
     this.didChildrenChange = true;
-    this.children = removeChild({
-      children: this.children,
+    this.props.children = removeChild({
+      children: this.props.children || [],
       child,
     });
   }
 
-  generateChildrenInstances() {
-    return this.children.map(child => child.createInstance());
-  }
+  getNativeArgs(buildItems = true): TouchBarScrubberConstructorOptionsIndex {
+    const { children, onSelect, onHighlight, debounceTime, selectedStyle, overlayStyle, continuous, showArrowButtons, mode, ...props } = this.props;
 
-  getNativeArgs(buildItems = true) {
-    const { children, onSelect, onHighlight, debounceTime, ...props } = this.props;
+    this.builtChildrenInstances = !buildItems
+      ? this.builtChildrenInstances
+      : (children || []).map(child => child.createInstance())
 
     return {
       ...props,
       // If not debounced, it causes serious performance issues
-      select: onSelect && debounce(onSelect, debounceTime || 250),
-      highlight: onHighlight && debounce(onHighlight, debounceTime || 250),
-      items: buildItems && this.generateChildrenInstances(),
+      select: onSelect && debounce(onSelect, debounceTime || 250) || nop,
+      highlight: onHighlight && debounce(onHighlight, debounceTime || 250) || nop,
+      items: this.builtChildrenInstances,
+      selectedStyle: selectedStyle || '',
+      overlayStyle: overlayStyle || '',
+      mode: mode || '',
+      continuous: continuous || false,
+      showArrowButtons: showArrowButtons || false,
     };
   }
 
@@ -83,7 +93,7 @@ class TouchBarScrubber {
         return;
       }
 
-      if (this.instance[key] !== args[key]) {
+      if (this.instance && this.instance[key] !== args[key]) {
         this.instance[key] = args[key];
       }
     });
@@ -94,13 +104,38 @@ class TouchBarScrubber {
 
   createInstance() {
     const args = this.getNativeArgs();
-    this.childrenSinceLastRender = this.children.length;
 
     const NativeTouchBar = getNativeTouchBar();
-    this.instance = new NativeTouchBar.TouchBarScrubber(args);
+    if (!NativeTouchBar) return null;
 
+    this.instance = new NativeTouchBar.TouchBarScrubber(args);
     return this.instance;
   }
 }
 
 export default TouchBarScrubber;
+
+export interface TouchBarScrubberProps {
+  children?: TouchBarScrubItem[];
+  onSelect?: (index: number) => void;
+  onHighlight?: (index: number) => void;
+  debounceTime?: number;
+  selectedStyle?: Style;
+  overlayStyle?: Style;
+  showArrowButtons?: boolean;
+  mode?: Mode;
+  continuous?: boolean;
+};
+
+export enum Style {
+  Background = 'background',
+  Outline = 'outline'
+}
+
+export enum Mode {
+  Fixed = 'fixed',
+  Free = 'free'
+}
+
+interface TouchBarScrubberConstructorOptionsIndex extends TouchBarScrubberConstructorOptions, WithIndex {};
+interface NativeTouchBarScrubberIndex extends NativeTouchBarScrubber, WithIndex {};
