@@ -1,8 +1,14 @@
+import {
+  TouchBarSpacer as NativeTouchBarSpacer,
+  TouchBarSpacerConstructorOptions,
+} from 'electron';
 import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
-import { getNativeTouchBar } from '../utils';
 
-const getSize = ({ small, large, flexible }) => {
+import { getNativeTouchBar } from '../utils';
+import { TouchbarElement } from './types';
+
+const getSize = ({ small, large, flexible }: TouchBarSpacerProps) => {
   if (small) {
     return 'small';
   }
@@ -15,59 +21,69 @@ const getSize = ({ small, large, flexible }) => {
     return 'flexible';
   }
 
-  return false;
-}
+  return undefined;
+};
 
-class TouchBarSpacer {
-  constructor(props) {
-    this.setProps(props);
+class TouchBarSpacer implements TouchbarElement {
+  public id: string;
+  private props: TouchBarSpacerProps;
+  private instance: Maybe<NativeTouchBarSpacerIndex>;
+
+  private constructor(props: TouchBarSpacerProps) {
     this.id = uuidv4();
+    this.props = props;
 
     this.instance = null;
   }
 
-  setProps(props) {
-    this.props = props;
-  }
-
-  update({ newProps }) {
+  public update({ newProps }: { newProps: TouchBarSpacerProps }) {
     if (isEqual(newProps, this.props)) {
       return;
     }
 
-    this.setProps(newProps);
+    this.props = newProps;
     return this.updateInstance();
   }
 
-  appendChild() {}
+  public appendChild() {}
 
-  insertBefore() {}
+  public insertBefore() {}
 
-  removeChild() {}
+  public removeChild() {}
 
-  getNativeArgs() {
-    const { size, small, large, flexible, ...props } = this.props;
+  private getNativeArgs(): TouchBarSpacerConstructorOptions {
+    const { small, large, flexible, ...props } = this.props;
 
     const sizeByProps = getSize({ small, large, flexible });
 
     return {
       ...props,
-      size: sizeByProps || size,
+      size: sizeByProps,
     };
   }
 
-  updateInstance() {
+  public updateInstance() {
     // Hard re-render needed.
     return true;
   }
 
-  createInstance() {
+  public createInstance() {
     const args = this.getNativeArgs();
 
     const NativeTouchBar = getNativeTouchBar();
+    if (!NativeTouchBar) return null;
+
     this.instance = new NativeTouchBar.TouchBarSpacer(args);
     return this.instance;
   }
 }
 
 export default TouchBarSpacer;
+
+export interface TouchBarSpacerProps {
+  small?: boolean;
+  large?: boolean;
+  flexible?: boolean;
+}
+
+interface NativeTouchBarSpacerIndex extends NativeTouchBarSpacer, WithIndex {}
