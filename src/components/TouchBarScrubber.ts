@@ -63,9 +63,7 @@ class TouchBarScrubber
     });
   }
 
-  private getNativeArgs(
-    buildItems = true,
-  ): TouchBarScrubberConstructorOptionsIndex {
+  private getNativeArgs(buildItems = true): TouchBarScrubberConstructorOptions {
     const {
       children,
       onSelect,
@@ -101,7 +99,7 @@ class TouchBarScrubber
   private updateInstance() {
     // this.didChildrenChange = true;
     let isRerenderNeeded = false;
-    const args = this.getNativeArgs(false);
+    const args = this.getNativeArgs(false) as WithIndex;
 
     // Update new/deleted items
     if (this.didChildrenChange) {
@@ -159,9 +157,6 @@ export enum Mode {
   Free = 'free',
 }
 
-interface TouchBarScrubberConstructorOptionsIndex
-  extends TouchBarScrubberConstructorOptions,
-    WithIndex {}
 interface NativeTouchBarScrubberIndex
   extends NativeTouchBarScrubber,
     WithIndex {}

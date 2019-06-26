@@ -58,7 +58,7 @@ class TouchBarColorPicker
     return false;
   }
 
-  private getNativeArgs(): TouchBarColorPickerConstructorOptionsWithIndex {
+  private getNativeArgs(): TouchBarColorPickerConstructorOptions {
     const { children, onChange, selected, ...props } = this.props;
 
     return {
@@ -72,7 +72,7 @@ class TouchBarColorPicker
   }
 
   private updateInstance() {
-    const args = this.getNativeArgs();
+    const args = this.getNativeArgs() as WithIndex;
 
     // Update instance.
     Object.keys(args).forEach(key => {
@@ -106,7 +106,4 @@ interface TouchBarColorPickerProps {
 
 interface NativeTouchBarColorPickerWithIndex
   extends NativeTouchBarColorPicker,
-    WithIndex {}
-interface TouchBarColorPickerConstructorOptionsWithIndex
-  extends TouchBarColorPickerConstructorOptions,
     WithIndex {}

@@ -45,7 +45,7 @@ class TouchBarLabel implements TouchbarElement<Maybe<NativeTouchBarLabel>> {
     return false;
   }
 
-  private getNativeArgs(): TouchBarLabelConstructorOptionsIndex {
+  private getNativeArgs(): TouchBarLabelConstructorOptions {
     const { children, color, ...props } = this.props;
 
     return {
@@ -56,7 +56,7 @@ class TouchBarLabel implements TouchbarElement<Maybe<NativeTouchBarLabel>> {
   }
 
   private updateInstance() {
-    const args = this.getNativeArgs();
+    const args = this.getNativeArgs() as WithIndex;
 
     // Update instance.
     Object.keys(args).forEach(key => {
@@ -86,7 +86,4 @@ export interface TouchBarLabelProps {
   color?: string;
 }
 
-interface TouchBarLabelConstructorOptionsIndex
-  extends TouchBarLabelConstructorOptions,
-    WithIndex {}
 interface NativeTouchBarLabelIndex extends NativeTouchBarLabel, WithIndex {}

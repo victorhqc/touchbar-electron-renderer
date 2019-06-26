@@ -41,7 +41,7 @@ class TouchBarButton implements TouchbarElement<Maybe<NativeTouchBarButton>> {
     return false;
   }
 
-  public getNativeArgs(): TouchBarConstructorOptionsWithIndex {
+  public getNativeArgs(): TouchBarButtonConstructorOptions {
     const { children, onClick, ...props } = this.props;
 
     return {
@@ -52,7 +52,7 @@ class TouchBarButton implements TouchbarElement<Maybe<NativeTouchBarButton>> {
   }
 
   private updateInstance() {
-    const args = this.getNativeArgs();
+    const args = this.getNativeArgs() as WithIndex;
 
     // Update instance.
     Object.keys(args).forEach(key => {
@@ -80,20 +80,11 @@ export default TouchBarButton;
 export interface TouchBarButtonProps {
   onClick?: () => void;
   icon?: NativeImage;
-  IconPosition?: IconPosition;
+  iconPosition?: 'left' | 'right' | 'overlay';
   backgroundColor?: string;
   children?: TouchBarText;
 }
 
-export enum IconPosition {
-  Left = 'left',
-  Right = 'right',
-  Overlay = 'overlay',
-}
-
-interface TouchBarConstructorOptionsWithIndex
-  extends TouchBarButtonConstructorOptions,
-    WithIndex {}
 interface NativeTouchBarButtonWithIndex
   extends NativeTouchBarButton,
     WithIndex {}

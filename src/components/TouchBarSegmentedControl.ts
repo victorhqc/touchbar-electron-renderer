@@ -82,7 +82,7 @@ export default class TouchBarSegmentedControl
 
   private getNativeArgs(
     buildItems = true,
-  ): TouchBarSegmentedControlConstructorOptionsIndex {
+  ): TouchBarSegmentedControlConstructorOptions {
     const { onChange, selected, ...props } = this.props;
 
     return {
@@ -99,7 +99,7 @@ export default class TouchBarSegmentedControl
       isRerenderNeeded = true;
     }
 
-    const args = this.getNativeArgs(false);
+    const args = this.getNativeArgs(false) as WithIndex;
 
     // Update instance.
     Object.keys(args).forEach(key => {
@@ -121,7 +121,6 @@ export default class TouchBarSegmentedControl
 
     const NativeTouchBar = getNativeTouchBar();
     if (!NativeTouchBar) return null;
-
     this.instance = new NativeTouchBar.TouchBarSegmentedControl(args);
 
     this.didChildrenChange = false;
@@ -133,12 +132,18 @@ export interface TouchBarSegmentedControlProps {
   children?: TouchBarSegment[];
   onChange?: (selectedIndex: number, isSelected: boolean) => void;
   selected?: number;
+  segmentStyle?:
+    | 'automatic'
+    | 'rounded'
+    | 'textured-rounded'
+    | 'round-rect'
+    | 'textured-square'
+    | 'capsule'
+    | 'small-square'
+    | 'separated';
+  mode?: 'single' | 'multiple' | 'buttons';
 }
 
 interface NativeTouchBarSegmentedControlIndex
   extends NativeTouchBarSegmentedControl,
-    WithIndex {}
-
-interface TouchBarSegmentedControlConstructorOptionsIndex
-  extends TouchBarSegmentedControlConstructorOptions,
     WithIndex {}
