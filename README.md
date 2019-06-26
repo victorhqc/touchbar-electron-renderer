@@ -178,6 +178,7 @@ ReactTouchBar.render(<App />, new TouchBar(window));
 - **_onClick:_** Function,  It'll be mapped to `click` in the native element.
 - **_icon:_** [NativeImage](https://electronjs.org/docs/api/native-image), Button's Icon.
 - **_iconPosition:_** String, Can be `left`, `right` or `overlay`.
+- **_backgroundColor:_** String, background color.
 
 _Note: Use only Hex colors._
 

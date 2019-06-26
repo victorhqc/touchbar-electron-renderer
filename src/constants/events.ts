@@ -1,4 +1,4 @@
-export const MOUSE_EVENTS = [
+export const MOUSE_EVENTS = <const>[
   'onClick',
   'onContextMenu',
   'onDoubleClick',

@@ -11,9 +11,15 @@ import {
   TouchBarSegmentedControl,
   TouchBarSlider,
   TouchBarSpacer,
+  ComponentProps,
+  AnyTouchBarComponent,
+  TouchBarType,
 } from './components';
 
-function createTouchBarElement(type, props) {
+function createTouchBarElement(
+  type: TouchBarType,
+  props: ComponentProps,
+): Maybe<AnyTouchBarComponent> {
   switch (type) {
     case 'button':
       return new TouchBarButton(props);
