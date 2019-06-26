@@ -4,41 +4,31 @@ import TouchBarText from './TouchBarText';
 import { TouchbarElement } from './types';
 
 class TouchBarColor implements TouchbarElement<string | undefined> {
-  id: string;
-  props: TouchBarColorProps;
+  public id: string;
+  private props: TouchBarColorProps;
 
-  constructor(props: TouchBarColorProps) {
+  private constructor(props: TouchBarColorProps) {
     this.id = uuidv4();
     this.props = props;
   }
 
-  // Text can have only one child.
-  appendChild(text: TouchBarText) {
-    if (
-      !text
-      && typeof text !== 'string'
-      && !text as any instanceof TouchBarText
-    ) {
-      console.warn(`<color /> child should be string, but received ${typeof text}`);
-      return;
-    }
-
+  public appendChild(text: TouchBarText) {
     this.props.children = text;
   }
 
-  insertBefore(text: TouchBarText) {
+  public insertBefore(text: TouchBarText) {
     this.appendChild(text);
   }
 
-  replaceText(text: TouchBarText) {
+  public replaceText(text: TouchBarText) {
     this.appendChild(text);
   }
 
-  removeChild() {
+  public removeChild() {
     this.props.children = undefined;
   }
 
-  createInstance() {
+  public createInstance() {
     if (!this.props.children) return;
     return this.props.children.createInstance();
   }

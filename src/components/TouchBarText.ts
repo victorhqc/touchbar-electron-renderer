@@ -3,29 +3,29 @@ import uuidv4 from 'uuid/v4';
 import { TouchbarElement } from './types';
 
 class TouchBarText implements TouchbarElement<string> {
-  id: string;
-  text: Maybe<string>;
+  public id: string;
+  private text: Maybe<string>;
 
-  constructor(text: string) {
+  private constructor(text: string) {
     this.id = uuidv4();
     this.text = text;
   }
 
-  insertBefore(text: string) {
+  public insertBefore(text: string) {
     this.text = text;
     return this.text;
   }
 
-  replaceText(text: string) {
+  public replaceText(text: string) {
     this.text = text;
     return this.text;
   }
 
-  removeChild() {
+  public removeChild() {
     this.text = null;
   }
 
-  createInstance() {
+  public createInstance() {
     return this.text || '';
   }
 }

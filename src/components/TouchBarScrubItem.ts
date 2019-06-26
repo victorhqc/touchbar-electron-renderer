@@ -6,29 +6,29 @@ import TouchBarText from './TouchBarText';
 import { TouchbarElement } from './types';
 
 class TouchBarScrubItem implements TouchbarElement<Maybe<ScrubberItem>> {
-  id: string;
-  props: TouchBarScrubItemProps;
-  instance: Maybe<ScrubberItemIndex>;
+  public id: string;
+  private props: TouchBarScrubItemProps;
+  private instance: Maybe<ScrubberItemIndex>;
 
-  constructor(props: TouchBarScrubItemProps) {
+  private constructor(props: TouchBarScrubItemProps) {
     this.id = uuidv4();
     this.props = props;
     this.instance = null;
   }
 
-  appendChild(child: TouchBarText): void {
+  public appendChild(child: TouchBarText): void {
     this.props.children = child;
   }
 
-  insertBefore(child: TouchBarText): void {
+  public insertBefore(child: TouchBarText): void {
     return this.appendChild(child);
   }
 
-  removeChild() {
+  public removeChild() {
     this.props.children = undefined;
   }
 
-  update({ newProps }: { newProps: TouchBarScrubItemProps }) {
+  public update({ newProps }: { newProps: TouchBarScrubItemProps }) {
     if (isEqual(newProps, this.props)) {
       return;
     }
@@ -40,7 +40,7 @@ class TouchBarScrubItem implements TouchbarElement<Maybe<ScrubberItem>> {
     return false;
   }
 
-  getNativeArgs(): ScrubberItemIndex {
+  private getNativeArgs(): ScrubberItemIndex {
     const { children, ...props } = this.props;
 
     return {
@@ -49,11 +49,11 @@ class TouchBarScrubItem implements TouchbarElement<Maybe<ScrubberItem>> {
     };
   }
 
-  updateInstance() {
+  private updateInstance() {
     const args = this.getNativeArgs();
 
     // Update instance.
-    Object.keys(args).forEach((key) => {
+    Object.keys(args).forEach(key => {
       if (this.instance && this.instance[key] !== args[key]) {
         this.instance[key] = args[key];
       }
@@ -62,7 +62,7 @@ class TouchBarScrubItem implements TouchbarElement<Maybe<ScrubberItem>> {
     return this.instance;
   }
 
-  createInstance() {
+  public createInstance() {
     const { children, ...props } = this.props;
 
     this.instance = {
@@ -79,6 +79,6 @@ export default TouchBarScrubItem;
 export interface TouchBarScrubItemProps {
   children?: TouchBarText;
   icon?: NativeImage;
-};
+}
 
-interface ScrubberItemIndex extends ScrubberItem, WithIndex {};
+interface ScrubberItemIndex extends ScrubberItem, WithIndex {}

@@ -1,4 +1,8 @@
-import { TouchBarScrubber as NativeTouchBarScrubber, TouchBarScrubberConstructorOptions, ScrubberItem } from 'electron';
+import {
+  TouchBarScrubber as NativeTouchBarScrubber,
+  TouchBarScrubberConstructorOptions,
+  ScrubberItem,
+} from 'electron';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import uuidv4 from 'uuid/v4';
@@ -9,14 +13,15 @@ import { TouchbarElement } from './types';
 
 const nop = () => {};
 
-class TouchBarScrubber implements TouchbarElement<Maybe<NativeTouchBarScrubber>> {
-  id: string;
-  props: TouchBarScrubberProps;
-  didChildrenChange: boolean;
-  instance: Maybe<NativeTouchBarScrubberIndex>;
-  builtChildrenInstances: ScrubberItem[];
+class TouchBarScrubber
+  implements TouchbarElement<Maybe<NativeTouchBarScrubber>> {
+  public id: string;
+  private props: TouchBarScrubberProps;
+  private didChildrenChange: boolean;
+  private instance: Maybe<NativeTouchBarScrubberIndex>;
+  private builtChildrenInstances: ScrubberItem[];
 
-  constructor(props: TouchBarScrubberProps) {
+  private constructor(props: TouchBarScrubberProps) {
     this.id = uuidv4();
     this.props = props;
     this.didChildrenChange = false;
@@ -24,7 +29,7 @@ class TouchBarScrubber implements TouchbarElement<Maybe<NativeTouchBarScrubber>>
     this.builtChildrenInstances = [];
   }
 
-  update({ newProps }: { newProps: TouchBarScrubberProps }) {
+  public update({ newProps }: { newProps: TouchBarScrubberProps }) {
     if (isEqual(newProps, this.props)) {
       return;
     }
@@ -33,12 +38,15 @@ class TouchBarScrubber implements TouchbarElement<Maybe<NativeTouchBarScrubber>>
     return this.updateInstance();
   }
 
-  appendChild(child: TouchBarScrubItem) {
+  public appendChild(child: TouchBarScrubItem) {
     this.didChildrenChange = true;
     (this.props.children || []).push(child);
   }
 
-  insertBefore(newChild: TouchBarScrubItem, beforeChild: TouchBarScrubItem) {
+  public insertBefore(
+    newChild: TouchBarScrubItem,
+    beforeChild: TouchBarScrubItem,
+  ) {
     this.didChildrenChange = true;
     this.props.children = insertBeforeChild({
       children: this.props.children || [],
@@ -47,7 +55,7 @@ class TouchBarScrubber implements TouchbarElement<Maybe<NativeTouchBarScrubber>>
     });
   }
 
-  removeChild(child: TouchBarScrubItem) {
+  public removeChild(child: TouchBarScrubItem) {
     this.didChildrenChange = true;
     this.props.children = removeChild({
       children: this.props.children || [],
@@ -55,18 +63,32 @@ class TouchBarScrubber implements TouchbarElement<Maybe<NativeTouchBarScrubber>>
     });
   }
 
-  getNativeArgs(buildItems = true): TouchBarScrubberConstructorOptionsIndex {
-    const { children, onSelect, onHighlight, debounceTime, selectedStyle, overlayStyle, continuous, showArrowButtons, mode, ...props } = this.props;
+  private getNativeArgs(
+    buildItems = true,
+  ): TouchBarScrubberConstructorOptionsIndex {
+    const {
+      children,
+      onSelect,
+      onHighlight,
+      debounceTime,
+      selectedStyle,
+      overlayStyle,
+      continuous,
+      showArrowButtons,
+      mode,
+      ...props
+    } = this.props;
 
     this.builtChildrenInstances = !buildItems
       ? this.builtChildrenInstances
-      : (children || []).map(child => child.createInstance())
+      : (children || []).map(child => child.createInstance());
 
     return {
       ...props,
       // If not debounced, it causes serious performance issues
-      select: onSelect && debounce(onSelect, debounceTime || 250) || nop,
-      highlight: onHighlight && debounce(onHighlight, debounceTime || 250) || nop,
+      select: (onSelect && debounce(onSelect, debounceTime || 250)) || nop,
+      highlight:
+        (onHighlight && debounce(onHighlight, debounceTime || 250)) || nop,
       items: this.builtChildrenInstances,
       selectedStyle: selectedStyle || '',
       overlayStyle: overlayStyle || '',
@@ -76,7 +98,7 @@ class TouchBarScrubber implements TouchbarElement<Maybe<NativeTouchBarScrubber>>
     };
   }
 
-  updateInstance() {
+  private updateInstance() {
     // this.didChildrenChange = true;
     let isRerenderNeeded = false;
     const args = this.getNativeArgs(false);
@@ -87,7 +109,7 @@ class TouchBarScrubber implements TouchbarElement<Maybe<NativeTouchBarScrubber>>
     }
 
     // Update instance.
-    Object.keys(args).forEach((key) => {
+    Object.keys(args).forEach(key => {
       // Avoid updating functions as there's not a really easy way to know if they changed.
       if (key === 'select' || key === 'highlight' || key === 'items') {
         return;
@@ -102,7 +124,7 @@ class TouchBarScrubber implements TouchbarElement<Maybe<NativeTouchBarScrubber>>
     return isRerenderNeeded;
   }
 
-  createInstance() {
+  public createInstance() {
     const args = this.getNativeArgs();
 
     const NativeTouchBar = getNativeTouchBar();
@@ -125,17 +147,21 @@ export interface TouchBarScrubberProps {
   showArrowButtons?: boolean;
   mode?: Mode;
   continuous?: boolean;
-};
+}
 
 export enum Style {
   Background = 'background',
-  Outline = 'outline'
+  Outline = 'outline',
 }
 
 export enum Mode {
   Fixed = 'fixed',
-  Free = 'free'
+  Free = 'free',
 }
 
-interface TouchBarScrubberConstructorOptionsIndex extends TouchBarScrubberConstructorOptions, WithIndex {};
-interface NativeTouchBarScrubberIndex extends NativeTouchBarScrubber, WithIndex {};
+interface TouchBarScrubberConstructorOptionsIndex
+  extends TouchBarScrubberConstructorOptions,
+    WithIndex {}
+interface NativeTouchBarScrubberIndex
+  extends NativeTouchBarScrubber,
+    WithIndex {}

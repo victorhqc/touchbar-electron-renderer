@@ -1,4 +1,7 @@
-import { TouchBarLabel as NativeTouchBarLabel, TouchBarLabelConstructorOptions } from 'electron';
+import {
+  TouchBarLabel as NativeTouchBarLabel,
+  TouchBarLabelConstructorOptions,
+} from 'electron';
 import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 
@@ -7,38 +10,30 @@ import { TouchbarElement } from './types';
 import TouchBarText from './TouchBarText';
 
 class TouchBarLabel implements TouchbarElement<Maybe<NativeTouchBarLabel>> {
-  id: string;
-  props: TouchBarLabelProps;
-  text: Maybe<TouchBarText>;
-  instance: Maybe<NativeTouchBarLabelIndex>;
+  public id: string;
+  private props: TouchBarLabelProps;
+  private instance: Maybe<NativeTouchBarLabelIndex>;
 
-  constructor({ children, ...props }: TouchBarLabelProps) {
+  private constructor(props: TouchBarLabelProps) {
     this.props = props;
     this.id = uuidv4();
 
-    // TouchBarLabel can have only one child.
-    this.text = children || null;
     this.instance = null;
   }
 
-  /**
-   * TouchBarLabel can only have text children.
-   * @param  {stting} text
-   * @return {void}
-   */
-  appendChild(text: TouchBarText): void {
-    this.text = text;
+  public appendChild(text: TouchBarText): void {
+    this.props.children = text;
   }
 
-  insertBefore(text: TouchBarText): void {
-    this.text = text;
+  public insertBefore(text: TouchBarText): void {
+    this.props.children = text;
   }
 
-  removeChild() {
-    this.text = null;
+  public removeChild() {
+    this.props.children = undefined;
   }
 
-  update({ newProps }: { newProps: TouchBarLabelProps }) {
+  public update({ newProps }: { newProps: TouchBarLabelProps }) {
     if (isEqual(newProps, this.props)) {
       return;
     }
@@ -50,21 +45,21 @@ class TouchBarLabel implements TouchbarElement<Maybe<NativeTouchBarLabel>> {
     return false;
   }
 
-  getNativeArgs(): TouchBarLabelConstructorOptionsIndex {
+  private getNativeArgs(): TouchBarLabelConstructorOptionsIndex {
     const { children, color, ...props } = this.props;
 
     return {
       ...props,
       textColor: color,
-      label: (this.text && this.text.createInstance()) || '',
+      label: (children && children.createInstance()) || '',
     };
   }
 
-  updateInstance() {
+  private updateInstance() {
     const args = this.getNativeArgs();
 
     // Update instance.
-    Object.keys(args).forEach((key) => {
+    Object.keys(args).forEach(key => {
       if (this.instance && this.instance[key] !== args[key]) {
         this.instance[key] = args[key];
       }
@@ -73,7 +68,7 @@ class TouchBarLabel implements TouchbarElement<Maybe<NativeTouchBarLabel>> {
     return this.instance;
   }
 
-  createInstance() {
+  public createInstance() {
     const args = this.getNativeArgs();
 
     const NativeTouchBar = getNativeTouchBar();
@@ -89,7 +84,9 @@ export default TouchBarLabel;
 export interface TouchBarLabelProps {
   children?: TouchBarText;
   color?: string;
-};
+}
 
-interface TouchBarLabelConstructorOptionsIndex extends TouchBarLabelConstructorOptions, WithIndex {};
-interface NativeTouchBarLabelIndex extends NativeTouchBarLabel, WithIndex {};
+interface TouchBarLabelConstructorOptionsIndex
+  extends TouchBarLabelConstructorOptions,
+    WithIndex {}
+interface NativeTouchBarLabelIndex extends NativeTouchBarLabel, WithIndex {}

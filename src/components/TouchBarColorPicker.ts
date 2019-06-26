@@ -1,51 +1,37 @@
 import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
-import { TouchBarColorPicker as NativeTouchBarColorPicker, TouchBarColorPickerConstructorOptions } from 'electron';
+import {
+  TouchBarColorPicker as NativeTouchBarColorPicker,
+  TouchBarColorPickerConstructorOptions,
+} from 'electron';
 
-import { isTruthy, insertBeforeChild, removeChild, getNativeTouchBar } from '../utils';
+import {
+  isTruthy,
+  insertBeforeChild,
+  removeChild,
+  getNativeTouchBar,
+} from '../utils';
 import TouchBarColor from './TouchBarColor';
 import { TouchbarElement } from './types';
 
-function isValidChild(child: TouchBarColor) {
-  if (!child as any instanceof TouchBarColor) {
-    console.warn('<color-picker /> Can only have <color /> as children.');
-    return false;
-  }
+class TouchBarColorPicker
+  implements TouchbarElement<Maybe<NativeTouchBarColorPicker>> {
+  public id: string;
+  private props: TouchBarColorPickerProps;
+  private instance: Maybe<NativeTouchBarColorPickerWithIndex>;
 
-  return true;
-}
-
-class TouchBarColorPicker implements TouchbarElement<Maybe<NativeTouchBarColorPicker>> {
-  props: TouchBarColorPickerProps;
-  id: string;
-  instance: Maybe<NativeTouchBarColorPickerWithIndex>;
-
-  constructor(props: TouchBarColorPickerProps) {
+  private constructor(props: TouchBarColorPickerProps) {
     this.props = props;
     this.id = uuidv4();
 
     this.instance = null;
   }
 
-
-  /**
-   * TouchBarColorPicker can only have <color /> children.
-   * @param  {stting} child
-   * @return {void}
-   */
-  appendChild(child: TouchBarColor): void {
-    if (!isValidChild(child)) {
-      return;
-    }
-
+  public appendChild(child: TouchBarColor): void {
     (this.props.children || []).push(child);
   }
 
-  insertBefore(newChild: TouchBarColor, beforeChild: TouchBarColor) {
-    if (!isValidChild(newChild)) {
-      return;
-    }
-
+  public insertBefore(newChild: TouchBarColor, beforeChild: TouchBarColor) {
     this.props.children = insertBeforeChild({
       children: this.props.children || [],
       newChild,
@@ -53,14 +39,14 @@ class TouchBarColorPicker implements TouchbarElement<Maybe<NativeTouchBarColorPi
     });
   }
 
-  removeChild(child: TouchBarColor) {
+  public removeChild(child: TouchBarColor) {
     this.props.children = removeChild({
       children: this.props.children || [],
       child,
     });
   }
 
-  update({ newProps }: { newProps: TouchBarColorPickerProps }) {
+  public update({ newProps }: { newProps: TouchBarColorPickerProps }) {
     if (isEqual(newProps, this.props)) {
       return;
     }
@@ -72,7 +58,7 @@ class TouchBarColorPicker implements TouchbarElement<Maybe<NativeTouchBarColorPi
     return false;
   }
 
-  getNativeArgs(): TouchBarColorPickerConstructorOptionsWithIndex {
+  private getNativeArgs(): TouchBarColorPickerConstructorOptionsWithIndex {
     const { children, onChange, selected, ...props } = this.props;
 
     return {
@@ -81,15 +67,15 @@ class TouchBarColorPicker implements TouchbarElement<Maybe<NativeTouchBarColorPi
       selectedColor: selected,
       availableColors: (children || [])
         .map(child => child.createInstance())
-        .filter(isTruthy)
+        .filter(isTruthy),
     };
   }
 
-  updateInstance() {
+  private updateInstance() {
     const args = this.getNativeArgs();
 
     // Update instance.
-    Object.keys(args).forEach((key) => {
+    Object.keys(args).forEach(key => {
       if (this.instance && this.instance[key] !== args[key]) {
         this.instance[key] = args[key];
       }
@@ -98,7 +84,7 @@ class TouchBarColorPicker implements TouchbarElement<Maybe<NativeTouchBarColorPi
     return this.instance;
   }
 
-  createInstance() {
+  public createInstance() {
     const args = this.getNativeArgs();
 
     const NativeTouchBar = getNativeTouchBar();
@@ -115,8 +101,12 @@ export default TouchBarColorPicker;
 interface TouchBarColorPickerProps {
   selected?: string;
   children?: TouchBarColor[];
-  onChange?: (color: string) => void
+  onChange?: (color: string) => void;
 }
 
-interface NativeTouchBarColorPickerWithIndex extends NativeTouchBarColorPicker, WithIndex {}
-interface TouchBarColorPickerConstructorOptionsWithIndex extends TouchBarColorPickerConstructorOptions, WithIndex {}
+interface NativeTouchBarColorPickerWithIndex
+  extends NativeTouchBarColorPicker,
+    WithIndex {}
+interface TouchBarColorPickerConstructorOptionsWithIndex
+  extends TouchBarColorPickerConstructorOptions,
+    WithIndex {}
