@@ -1,67 +1,66 @@
+import {
+  TouchBarSlider as NativeTouchBarSlider,
+  TouchBarSliderConstructorOptions,
+} from 'electron';
 import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 
 import debounce from 'lodash/debounce';
 
-import { buildChild, getNativeTouchBar } from '../utils';
+import { getNativeTouchBar } from '../utils';
+import TouchBarText from './TouchBarText';
+import { TouchbarElement } from './types';
 
-class TouchBarSlider {
-  constructor(props) {
-    this.setProps(props);
+class TouchBarSlider implements TouchbarElement<Maybe<NativeTouchBarSlider>> {
+  public id: string;
+  private props: TouchBarSliderProps;
+  private instance: Maybe<NativeTouchBarSliderIndex>;
+
+  private constructor(props: TouchBarSliderProps) {
     this.id = uuidv4();
+    this.props = props;
 
-    // TouchBarSlider can have only one child.
-    this.child = null;
     this.instance = null;
   }
 
-  setProps(props) {
-    this.props = props;
-  }
-
-  update({ newProps }) {
+  public update({ newProps }: { newProps: TouchBarSliderProps }) {
     if (isEqual(newProps, this.props)) {
       return;
     }
 
-    this.setProps(newProps);
+    this.props = newProps;
     return this.updateInstance();
   }
 
-  /**
-   * TouchBarSlider can only have text children.
-   * @param  {stting} child
-   * @return {void}
-   */
-  appendChild(child) {
-    this.child = child;
+  public appendChild(child: TouchBarText) {
+    this.props.children = child;
   }
 
-  insertBefore(child) {
-    return this.appendChild(child);
+  public insertBefore(child: TouchBarText) {
+    this.appendChild(child);
   }
 
-  removeChild() {
-    this.child = null;
+  public removeChild() {
+    this.props.children = undefined;
   }
 
-  getNativeArgs() {
-    const { children, onChange, icon, ...props } = this.props;
+  private getNativeArgs(): TouchBarSliderConstructorOptions {
+    const { children, onChange, ...props } = this.props;
 
     return {
       ...props,
-      label: buildChild(this.child),
+      label: children && children.createInstance(),
       // If not debounced, it causes serious performance issues
       change: onChange && debounce(onChange, props.debounceTime || 0),
     };
   }
 
-  updateInstance() {
-    const args = this.getNativeArgs();
+  private updateInstance() {
+    const args = this.getNativeArgs() as WithIndex;
 
     // Update instance.
-    Object.keys(args).forEach((key) => {
-      if (this.instance[key] !== args[key]) {
+    Object.keys(args).forEach(key => {
+      if (this.instance && this.instance[key] !== args[key]) {
         this.instance[key] = args[key];
       }
     });
@@ -69,13 +68,26 @@ class TouchBarSlider {
     return false;
   }
 
-  createInstance() {
+  public createInstance() {
     const args = this.getNativeArgs();
 
     const NativeTouchBar = getNativeTouchBar();
+    if (!NativeTouchBar) return null;
+
     this.instance = new NativeTouchBar.TouchBarSlider(args);
     return this.instance;
   }
 }
 
 export default TouchBarSlider;
+
+export interface TouchBarSliderProps {
+  children?: TouchBarText;
+  debounceTime?: number;
+  onChange?: (newValue: number) => void;
+  value?: number;
+  minValue?: number;
+  maxValue?: number;
+}
+
+interface NativeTouchBarSliderIndex extends NativeTouchBarSlider, WithIndex {}
