@@ -8,15 +8,15 @@ import {
   isTruthy,
   TouchBarType,
 } from '../utils';
-import { TouchBarComponent } from './types';
+import { NativeTouchBarComponent } from './types';
 
 class TouchBar {
-  private children: TouchBarComponent[];
+  private children: NativeTouchBarComponent[];
   private didChildrenChange: boolean;
   private electronWindow: BrowserWindow;
   private instance: Maybe<NativeTouchBar>;
 
-  private constructor(
+  public constructor(
     electronWindow: BrowserWindow,
     NativeTouchBar: TouchBarType,
   ) {
@@ -27,7 +27,7 @@ class TouchBar {
     setNativeTouchBar(NativeTouchBar);
   }
 
-  public appendChild(child: TouchBarComponent) {
+  public appendChild(child: NativeTouchBarComponent) {
     if (!child) {
       return;
     }
@@ -37,8 +37,8 @@ class TouchBar {
   }
 
   public insertBefore(
-    newChild: TouchBarComponent,
-    beforeChild: TouchBarComponent,
+    newChild: NativeTouchBarComponent,
+    beforeChild: NativeTouchBarComponent,
   ) {
     this.children = insertBeforeChild({
       children: this.children,
@@ -48,7 +48,7 @@ class TouchBar {
     this.didChildrenChange = true;
   }
 
-  public removeChild(child: TouchBarComponent) {
+  public removeChild(child: NativeTouchBarComponent) {
     this.children = removeChild({
       children: this.children,
       child,

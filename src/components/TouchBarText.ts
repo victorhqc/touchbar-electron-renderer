@@ -1,12 +1,12 @@
 import uuidv4 from 'uuid/v4';
 
-import { TouchBarTextInterface } from './types';
+import { TouchBarTextComponent } from './types';
 
-class TouchBarText implements TouchBarTextInterface {
+class TouchBarText implements TouchBarTextComponent {
   public id: string;
   private text: string;
 
-  private constructor(text: string) {
+  public constructor(text: string) {
     this.id = uuidv4();
     this.text = text;
   }

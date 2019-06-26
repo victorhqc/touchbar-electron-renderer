@@ -9,18 +9,18 @@ import uuidv4 from 'uuid/v4';
 
 import { insertBeforeChild, removeChild, getNativeTouchBar } from '../utils';
 import TouchBarScrubItem from './TouchBarScrubItem';
-import { TouchbarElement } from './types';
+import { ComponentProps, NativeTouchBarComponent } from './types';
 
 const nop = () => {};
 
-class TouchBarScrubber implements TouchbarElement<TouchBarScrubberProps> {
+class TouchBarScrubber implements NativeTouchBarComponent {
   public id: string;
   private props: TouchBarScrubberProps;
   private didChildrenChange: boolean;
   private instance: Maybe<NativeTouchBarScrubberIndex>;
   private builtChildrenInstances: ScrubberItem[];
 
-  private constructor(props: TouchBarScrubberProps) {
+  public constructor(props: TouchBarScrubberProps) {
     this.id = uuidv4();
     this.props = props;
     this.didChildrenChange = false;
@@ -138,7 +138,7 @@ class TouchBarScrubber implements TouchbarElement<TouchBarScrubberProps> {
 
 export default TouchBarScrubber;
 
-export interface TouchBarScrubberProps {
+export interface TouchBarScrubberProps extends ComponentProps {
   children?: TouchBarScrubItem[];
   onSelect?: (index: number) => void;
   onHighlight?: (index: number) => void;

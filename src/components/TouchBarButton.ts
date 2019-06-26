@@ -6,15 +6,15 @@ import {
 import uuidv4 from 'uuid/v4';
 
 import { getNativeTouchBar } from '../utils';
-import { TouchbarElement } from './types';
+import { ComponentProps, NativeTouchBarComponent } from './types';
 import TouchBarText from './TouchBarText';
 
-class TouchBarButton implements TouchbarElement<TouchBarButtonProps> {
+class TouchBarButton implements NativeTouchBarComponent {
   public id: string;
   private props: TouchBarButtonProps;
   private instance: Maybe<NativeTouchBarButtonWithIndex>;
 
-  private constructor(props: TouchBarButtonProps) {
+  public constructor(props: TouchBarButtonProps) {
     this.props = props;
     this.id = uuidv4();
 
@@ -77,7 +77,7 @@ class TouchBarButton implements TouchbarElement<TouchBarButtonProps> {
 
 export default TouchBarButton;
 
-export interface TouchBarButtonProps {
+export interface TouchBarButtonProps extends ComponentProps {
   onClick?: () => void;
   icon?: NativeImage;
   iconPosition?: 'left' | 'right' | 'overlay';

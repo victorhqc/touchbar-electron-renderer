@@ -9,14 +9,14 @@ import debounce from 'lodash/debounce';
 
 import { getNativeTouchBar } from '../utils';
 import TouchBarText from './TouchBarText';
-import { TouchbarElement } from './types';
+import { ComponentProps, NativeTouchBarComponent } from './types';
 
-class TouchBarSlider implements TouchbarElement<TouchBarSliderProps> {
+class TouchBarSlider implements NativeTouchBarComponent {
   public id: string;
   private props: TouchBarSliderProps;
   private instance: Maybe<NativeTouchBarSliderIndex>;
 
-  private constructor(props: TouchBarSliderProps) {
+  public constructor(props: TouchBarSliderProps) {
     this.id = uuidv4();
     this.props = props;
 
@@ -81,7 +81,7 @@ class TouchBarSlider implements TouchbarElement<TouchBarSliderProps> {
 
 export default TouchBarSlider;
 
-export interface TouchBarSliderProps {
+export interface TouchBarSliderProps extends ComponentProps {
   children?: TouchBarText;
   debounceTime?: number;
   onChange?: (newValue: number) => void;

@@ -12,19 +12,19 @@ import {
   isTruthy,
 } from '../utils';
 import {
-  TouchbarElement,
-  TouchBarComponent,
-  NativeTouchBarValidItems,
+  ComponentProps,
+  NativeTouchBarComponent,
+  NativeTouchBarItem,
 } from './types';
 
-class TouchBarPopover implements TouchbarElement<TouchBarPopoverProps> {
+class TouchBarPopover implements NativeTouchBarComponent {
   public id: string;
   private props: TouchBarPopoverProps;
   private didChildrenChange: boolean;
   private instance: Maybe<NativeTouchBarPopoverIndex>;
-  private builtChildrenInstances: NativeTouchBarValidItems[];
+  private builtChildrenInstances: NativeTouchBarItem[];
 
-  private constructor(props: TouchBarPopoverProps) {
+  public constructor(props: TouchBarPopoverProps) {
     this.id = uuidv4();
     this.props = props;
     this.didChildrenChange = false;
@@ -41,7 +41,7 @@ class TouchBarPopover implements TouchbarElement<TouchBarPopoverProps> {
     return this.updateInstance();
   }
 
-  public appendChild(child: TouchBarComponent) {
+  public appendChild(child: NativeTouchBarComponent) {
     if (!this.props.children) {
       this.props.children = [];
     }
@@ -51,8 +51,8 @@ class TouchBarPopover implements TouchbarElement<TouchBarPopoverProps> {
   }
 
   public insertBefore(
-    newChild: TouchBarComponent,
-    beforeChild: TouchBarComponent,
+    newChild: NativeTouchBarComponent,
+    beforeChild: NativeTouchBarComponent,
   ) {
     this.props.children = insertBeforeChild({
       children: this.props.children || [],
@@ -62,7 +62,7 @@ class TouchBarPopover implements TouchbarElement<TouchBarPopoverProps> {
     this.didChildrenChange = true;
   }
 
-  public removeChild(child: TouchBarComponent) {
+  public removeChild(child: NativeTouchBarComponent) {
     this.props.children = removeChild({
       children: this.props.children || [],
       child,
@@ -127,11 +127,11 @@ class TouchBarPopover implements TouchbarElement<TouchBarPopoverProps> {
 
 export default TouchBarPopover;
 
-export interface TouchBarPopoverProps {
+export interface TouchBarPopoverProps extends ComponentProps {
   label?: string;
   icon?: NativeImage;
   hideCloseButton?: boolean;
-  children?: TouchBarComponent[];
+  children?: NativeTouchBarComponent[];
 }
 
 interface NativeTouchBarPopoverIndex extends NativeTouchBarPopover, WithIndex {}

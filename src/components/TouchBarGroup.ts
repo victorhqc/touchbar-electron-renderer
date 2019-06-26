@@ -7,15 +7,15 @@ import {
   getNativeTouchBar,
   isTruthy,
 } from '../utils';
-import { TouchbarElement, TouchBarComponent } from './types';
+import { ComponentProps, NativeTouchBarComponent } from './types';
 
-class TouchBarGroup implements TouchbarElement<TouchBarGroupProps> {
+class TouchBarGroup implements NativeTouchBarComponent {
   public id: string;
   private props: TouchBarGroupProps;
   private didChildrenChange: boolean;
   private instance: Maybe<NativeTouchBarGroup>;
 
-  private constructor(props: TouchBarGroupProps) {
+  public constructor(props: TouchBarGroupProps) {
     this.id = uuidv4();
     this.props = props;
 
@@ -27,7 +27,7 @@ class TouchBarGroup implements TouchbarElement<TouchBarGroupProps> {
     return this.updateInstance();
   }
 
-  public appendChild(child: TouchBarComponent) {
+  public appendChild(child: NativeTouchBarComponent) {
     if (!this.props.children) {
       this.props.children = [];
     }
@@ -37,8 +37,8 @@ class TouchBarGroup implements TouchbarElement<TouchBarGroupProps> {
   }
 
   public insertBefore(
-    newChild: TouchBarComponent,
-    beforeChild: TouchBarComponent,
+    newChild: NativeTouchBarComponent,
+    beforeChild: NativeTouchBarComponent,
   ) {
     this.props.children = insertBeforeChild({
       children: this.props.children || [],
@@ -49,7 +49,7 @@ class TouchBarGroup implements TouchbarElement<TouchBarGroupProps> {
     this.didChildrenChange = true;
   }
 
-  public removeChild(child: TouchBarComponent) {
+  public removeChild(child: NativeTouchBarComponent) {
     this.props.children = removeChild({
       children: this.props.children || [],
       child,
@@ -89,6 +89,6 @@ class TouchBarGroup implements TouchbarElement<TouchBarGroupProps> {
 
 export default TouchBarGroup;
 
-export interface TouchBarGroupProps {
-  children?: TouchBarComponent[];
+export interface TouchBarGroupProps extends ComponentProps {
+  children?: NativeTouchBarComponent[];
 }

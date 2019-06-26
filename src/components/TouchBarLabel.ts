@@ -6,15 +6,15 @@ import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 
 import { getNativeTouchBar } from '../utils';
-import { TouchbarElement } from './types';
+import { ComponentProps, NativeTouchBarComponent } from './types';
 import TouchBarText from './TouchBarText';
 
-class TouchBarLabel implements TouchbarElement<TouchBarLabelProps> {
+class TouchBarLabel implements NativeTouchBarComponent {
   public id: string;
   private props: TouchBarLabelProps;
   private instance: Maybe<NativeTouchBarLabelIndex>;
 
-  private constructor(props: TouchBarLabelProps) {
+  public constructor(props: TouchBarLabelProps) {
     this.props = props;
     this.id = uuidv4();
 
@@ -81,7 +81,7 @@ class TouchBarLabel implements TouchbarElement<TouchBarLabelProps> {
 
 export default TouchBarLabel;
 
-export interface TouchBarLabelProps {
+export interface TouchBarLabelProps extends ComponentProps {
   children?: TouchBarText;
   color?: string;
 }

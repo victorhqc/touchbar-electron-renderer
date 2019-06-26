@@ -11,9 +11,16 @@ import {
   TouchBarSegmentedControl,
   TouchBarSlider,
   TouchBarSpacer,
+  TouchBarComponent,
+  ComponentProps,
+  NativeTouchBarItem,
+  InternalTouchBarItem,
 } from './components';
 
-function createTouchBarElement(type, props) {
+function createTouchBarElement(
+  type: TouchBarElements,
+  props: ComponentProps,
+): Maybe<TouchBarComponent<NativeTouchBarItem | InternalTouchBarItem>> {
   switch (type) {
     case 'button':
       return new TouchBarButton(props);
@@ -45,3 +52,17 @@ function createTouchBarElement(type, props) {
 }
 
 export default createTouchBarElement;
+
+export type TouchBarElements =
+  | 'button'
+  | 'color'
+  | 'color-picker'
+  | 'group'
+  | 'label'
+  | 'popover'
+  | 'scrubber'
+  | 'scrub-item'
+  | 'segment'
+  | 'segmented-control'
+  | 'slider'
+  | 'spacer';

@@ -12,36 +12,35 @@ import {
   SegmentedControlSegment,
 } from 'electron';
 
-export interface WithId {
+export interface TouchBarCompositeComponent {
   id: string;
 }
 
-export interface TouchBarTextInterface extends WithId {
+export interface TouchBarTextComponent extends TouchBarCompositeComponent {
   replaceText(text: string): void;
 }
 
-export interface TouchBarComponent extends WithId {
-  appendChild(child: WithId): void;
-  insertBefore(newChild: WithId, beforeChild: WithId): void;
-  removeChild(child: WithId): void;
+export interface TouchBarComponent<T> extends TouchBarCompositeComponent {
+  appendChild(child: TouchBarCompositeComponent): void;
+  insertBefore(
+    newChild: TouchBarCompositeComponent,
+    beforeChild: TouchBarCompositeComponent,
+  ): void;
+  removeChild(child: TouchBarCompositeComponent): void;
 
-  createInstance(): Maybe<NativeTouchBarValidItems>;
+  update(args: { newProps: ComponentProps }): boolean;
+  createInstance(): Maybe<T>;
 }
 
-export interface TouchbarElement<T> extends TouchBarComponent {
-  update(args: { newProps: T }): boolean;
-}
+export type NativeTouchBarComponent = TouchBarComponent<NativeTouchBarItem>;
+export type InternalTouchBarComponent = TouchBarComponent<InternalTouchBarItem>;
 
-export interface TouchBarInternalElement<T> extends WithId {
-  appendChild(child: WithId): void;
-  insertBefore(newChild: WithId, beforeChild: WithId): void;
-  removeChild(child: WithId): void;
+// export interface TouchBarNativeComponent
+//   extends TouchBarComponent<NativeTouchBarValidItems> {}
+// export interface TouchBarInternalComponent
+//   extends TouchBarComponent<string | ScrubberItem | SegmentedControlSegment> {}
 
-  update(args: { newProps: T }): boolean;
-  createInstance(): Maybe<string | ScrubberItem | SegmentedControlSegment>;
-}
-
-export type NativeTouchBarValidItems =
+export type NativeTouchBarItem =
   | (NativeTouchBarButton)
   | (NativeTouchBarColorPicker)
   | (NativeTouchBarGroup)
@@ -51,3 +50,12 @@ export type NativeTouchBarValidItems =
   | (NativeTouchBarSegmentedControl)
   | (NativeTouchBarSlider)
   | (NativeTouchBarSpacer);
+
+export type InternalTouchBarItem =
+  | string
+  | ScrubberItem
+  | SegmentedControlSegment;
+
+export interface ComponentProps {
+  [key: string]: any;
+}

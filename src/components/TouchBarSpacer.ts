@@ -6,7 +6,7 @@ import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 
 import { getNativeTouchBar } from '../utils';
-import { TouchbarElement } from './types';
+import { ComponentProps, TouchbarElement } from './types';
 
 const getSize = ({ small, large, flexible }: TouchBarSpacerProps) => {
   if (small) {
@@ -29,7 +29,7 @@ class TouchBarSpacer implements TouchbarElement<TouchBarSpacerProps> {
   private props: TouchBarSpacerProps;
   private instance: Maybe<NativeTouchBarSpacerIndex>;
 
-  private constructor(props: TouchBarSpacerProps) {
+  public constructor(props: TouchBarSpacerProps) {
     this.id = uuidv4();
     this.props = props;
 
@@ -80,7 +80,7 @@ class TouchBarSpacer implements TouchbarElement<TouchBarSpacerProps> {
 
 export default TouchBarSpacer;
 
-export interface TouchBarSpacerProps {
+export interface TouchBarSpacerProps extends ComponentProps {
   small?: boolean;
   large?: boolean;
   flexible?: boolean;

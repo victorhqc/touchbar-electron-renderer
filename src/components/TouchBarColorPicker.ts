@@ -12,15 +12,14 @@ import {
   getNativeTouchBar,
 } from '../utils';
 import TouchBarColor from './TouchBarColor';
-// import TouchBarText from './TouchBarText';
-import { TouchbarElement } from './types';
+import { ComponentProps, NativeTouchBarComponent } from './types';
 
-class TouchBarColorPicker implements TouchbarElement<TouchBarColorPickerProps> {
+class TouchBarColorPicker implements NativeTouchBarComponent {
   public id: string;
   private props: TouchBarColorPickerProps;
   private instance: Maybe<NativeTouchBarColorPickerWithIndex>;
 
-  private constructor(props: TouchBarColorPickerProps) {
+  public constructor(props: TouchBarColorPickerProps) {
     this.props = props;
     this.id = uuidv4();
 
@@ -102,7 +101,7 @@ class TouchBarColorPicker implements TouchbarElement<TouchBarColorPickerProps> {
 
 export default TouchBarColorPicker;
 
-interface TouchBarColorPickerProps {
+interface TouchBarColorPickerProps extends ComponentProps {
   selected?: string;
   children?: TouchBarColor[];
   onChange?: (color: string) => void;

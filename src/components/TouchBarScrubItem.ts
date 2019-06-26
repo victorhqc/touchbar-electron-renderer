@@ -3,15 +3,14 @@ import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 
 import TouchBarText from './TouchBarText';
-import { TouchBarInternalElement } from './types';
+import { ComponentProps, InternalTouchBarComponent } from './types';
 
-class TouchBarScrubItem
-  implements TouchBarInternalElement<TouchBarScrubItemProps> {
+class TouchBarScrubItem implements InternalTouchBarComponent {
   public id: string;
   private props: TouchBarScrubItemProps;
   private instance: Maybe<ScrubberItemIndex>;
 
-  private constructor(props: TouchBarScrubItemProps) {
+  public constructor(props: TouchBarScrubItemProps) {
     this.id = uuidv4();
     this.props = props;
     this.instance = null;
@@ -77,7 +76,7 @@ class TouchBarScrubItem
 
 export default TouchBarScrubItem;
 
-export interface TouchBarScrubItemProps {
+export interface TouchBarScrubItemProps extends ComponentProps {
   children?: TouchBarText;
   icon?: NativeImage;
 }

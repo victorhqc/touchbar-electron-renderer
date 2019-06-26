@@ -8,19 +8,19 @@ import isEqual from 'lodash/isEqual';
 
 import { insertBeforeChild, removeChild, getNativeTouchBar } from '../utils';
 import TouchBarSegment from './TouchBarSegment';
-import { TouchbarElement } from './types';
+import { ComponentProps, NativeTouchBarComponent } from './types';
 
 const nop = () => {};
 
 export default class TouchBarSegmentedControl
-  implements TouchbarElement<TouchBarSegmentedControlProps> {
+  implements NativeTouchBarComponent {
   public id: string;
   private props: TouchBarSegmentedControlProps;
   private instance: Maybe<NativeTouchBarSegmentedControlIndex>;
   private didChildrenChange: boolean;
   private builtChildrenInstances: SegmentedControlSegment[];
 
-  private constructor(props: TouchBarSegmentedControlProps) {
+  public constructor(props: TouchBarSegmentedControlProps) {
     this.id = uuidv4();
     this.props = props;
 
@@ -128,7 +128,7 @@ export default class TouchBarSegmentedControl
   }
 }
 
-export interface TouchBarSegmentedControlProps {
+export interface TouchBarSegmentedControlProps extends ComponentProps {
   children?: TouchBarSegment[];
   onChange?: (selectedIndex: number, isSelected: boolean) => void;
   selected?: number;

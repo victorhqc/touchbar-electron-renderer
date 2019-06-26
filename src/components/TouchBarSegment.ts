@@ -3,15 +3,14 @@ import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 
 import TouchBarText from './TouchBarText';
-import { TouchBarInternalElement } from './types';
+import { ComponentProps, InternalTouchBarComponent } from './types';
 
-export default class TouchBarSegment
-  implements TouchBarInternalElement<TouchBarSegmentProps> {
+export default class TouchBarSegment implements InternalTouchBarComponent {
   public id: string;
   private props: TouchBarSegmentProps;
   private instance: Maybe<SegmentedControlSegmentIndex>;
 
-  private constructor(props: TouchBarSegmentProps) {
+  public constructor(props: TouchBarSegmentProps) {
     this.id = uuidv4();
     this.props = props;
 
@@ -75,7 +74,7 @@ export default class TouchBarSegment
   }
 }
 
-export interface TouchBarSegmentProps {
+export interface TouchBarSegmentProps extends ComponentProps {
   children?: TouchBarText;
   disabled?: boolean;
   icon?: NativeImage;
