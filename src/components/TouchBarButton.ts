@@ -1,4 +1,8 @@
-import { NativeImage, TouchBarButton as NativeTouchBarButton, TouchBarButtonConstructorOptions } from 'electron'
+import {
+  NativeImage,
+  TouchBarButton as NativeTouchBarButton,
+  TouchBarButtonConstructorOptions,
+} from 'electron';
 import uuidv4 from 'uuid/v4';
 
 import { getNativeTouchBar } from '../utils';
@@ -6,30 +10,30 @@ import { TouchbarElement } from './types';
 import TouchBarText from './TouchBarText';
 
 class TouchBarButton implements TouchbarElement<Maybe<NativeTouchBarButton>> {
-  id: string;
-  props: TouchBarButtonProps;
-  instance: Maybe<NativeTouchBarButtonWithIndex>;
+  public id: string;
+  private props: TouchBarButtonProps;
+  private instance: Maybe<NativeTouchBarButtonWithIndex>;
 
-  constructor(props: TouchBarButtonProps) {
+  private constructor(props: TouchBarButtonProps) {
     this.props = props;
     this.id = uuidv4();
 
     this.instance = null;
   }
 
-  appendChild(child: TouchBarText): void {
+  public appendChild(child: TouchBarText): void {
     this.props.children = child;
   }
 
-  insertBefore(child: TouchBarText) {
+  public insertBefore(child: TouchBarText) {
     return this.appendChild(child);
   }
 
-  removeChild() {
+  public removeChild() {
     this.props.children = undefined;
   }
 
-  update({ newProps }: { newProps: TouchBarButtonProps }) {
+  public update({ newProps }: { newProps: TouchBarButtonProps }) {
     this.props = newProps;
     this.updateInstance();
 
@@ -37,12 +41,8 @@ class TouchBarButton implements TouchbarElement<Maybe<NativeTouchBarButton>> {
     return false;
   }
 
-  getNativeArgs(): TouchBarConstructorOptionsWithIndex {
-    const {
-      children,
-      onClick,
-      ...props
-    } = this.props;
+  public getNativeArgs(): TouchBarConstructorOptionsWithIndex {
+    const { children, onClick, ...props } = this.props;
 
     return {
       ...props,
@@ -51,11 +51,11 @@ class TouchBarButton implements TouchbarElement<Maybe<NativeTouchBarButton>> {
     };
   }
 
-  updateInstance() {
+  private updateInstance() {
     const args = this.getNativeArgs();
 
     // Update instance.
-    Object.keys(args).forEach((key) => {
+    Object.keys(args).forEach(key => {
       if (!this.instance) return;
 
       if (this.instance[key] !== args[key]) {
@@ -64,7 +64,7 @@ class TouchBarButton implements TouchbarElement<Maybe<NativeTouchBarButton>> {
     });
   }
 
-  createInstance() {
+  public createInstance() {
     const args = this.getNativeArgs();
 
     const NativeTouchBar = getNativeTouchBar();
@@ -78,9 +78,9 @@ class TouchBarButton implements TouchbarElement<Maybe<NativeTouchBarButton>> {
 export default TouchBarButton;
 
 export interface TouchBarButtonProps {
-  onClick?:() => void;
+  onClick?: () => void;
   icon?: NativeImage;
-  IconPosition?:IconPosition;
+  IconPosition?: IconPosition;
   backgroundColor?: string;
   children?: TouchBarText;
 }
@@ -88,8 +88,12 @@ export interface TouchBarButtonProps {
 export enum IconPosition {
   Left = 'left',
   Right = 'right',
-  Overlay = 'overlay'
-};
+  Overlay = 'overlay',
+}
 
-interface TouchBarConstructorOptionsWithIndex extends TouchBarButtonConstructorOptions, WithIndex {}
-interface NativeTouchBarButtonWithIndex extends NativeTouchBarButton, WithIndex {}
+interface TouchBarConstructorOptionsWithIndex
+  extends TouchBarButtonConstructorOptions,
+    WithIndex {}
+interface NativeTouchBarButtonWithIndex
+  extends NativeTouchBarButton,
+    WithIndex {}
