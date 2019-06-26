@@ -28,7 +28,11 @@ class TouchBarColorPicker implements TouchbarElement<TouchBarColorPickerProps> {
   }
 
   public appendChild(child: TouchBarColor): void {
-    (this.props.children || []).push(child);
+    if (!this.props.children) {
+      this.props.children = [];
+    }
+
+    this.props.children.push(child);
   }
 
   public insertBefore(newChild: TouchBarColor, beforeChild: TouchBarColor) {

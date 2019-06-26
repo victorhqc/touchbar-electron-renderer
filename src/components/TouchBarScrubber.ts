@@ -38,8 +38,12 @@ class TouchBarScrubber implements TouchbarElement<TouchBarScrubberProps> {
   }
 
   public appendChild(child: TouchBarScrubItem) {
+    if (!this.props.children) {
+      this.props.children = [];
+    }
+
     this.didChildrenChange = true;
-    (this.props.children || []).push(child);
+    this.props.children.push(child);
   }
 
   public insertBefore(
