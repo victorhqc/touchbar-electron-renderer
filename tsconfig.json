@@ -6,9 +6,11 @@
     "module": "es6",
     "moduleResolution": "node",
     "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true,
     "target": "es5",
     "allowSyntheticDefaultImports": true,
-    "strict": true
+    "strict": true,
   },
   "include": [
     "src/**/*"
