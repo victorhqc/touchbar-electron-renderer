@@ -1,6 +1,4 @@
-import isFunction from 'lodash/isFunction';
 import flatten from 'lodash/flatten';
-import { TouchbarElement } from '../components/types'
 
 export function insertBeforeChild<T extends WithId>({ children, newChild, beforeChild }: InsertBeforeChildArgs<T>) {
   const orderedChildren = children.reduce<T[]>((prev, currentChild) => {
@@ -27,14 +25,6 @@ export function removeChild<T extends WithId>({ children, child }: RemoveChildAr
 interface RemoveChildArgs<T extends WithId> {
   children: T[],
   child: T,
-}
-
-export function buildChild<T>(child: TouchbarElement<T>) {
-  if (child && isFunction(child.createInstance)) {
-    return child.createInstance();
-  }
-
-  return child;
 }
 
 interface WithId {
