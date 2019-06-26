@@ -1,4 +1,4 @@
-import { SegmentedControlSegment } from 'electron';
+import { SegmentedControlSegment, NativeImage } from 'electron';
 import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 
@@ -78,6 +78,7 @@ export default class TouchBarSegment
 export interface TouchBarSegmentProps {
   children?: TouchBarText;
   disabled?: boolean;
+  icon?: NativeImage;
 }
 
 interface SegmentedControlSegmentIndex
