@@ -64,7 +64,7 @@ export type InternalTouchBarItem =
   | SegmentedControlSegment;
 
 export interface ComponentProps {
-  [key: string]: any;
+  readonly [key: string]: any;
 }
 
 export type TouchBarType =

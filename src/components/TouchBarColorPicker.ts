@@ -18,33 +18,31 @@ class TouchBarColorPicker implements NativeTouchBarComponent {
   public id: string;
   private props: TouchBarColorPickerProps;
   private instance: Maybe<NativeTouchBarColorPickerWithIndex>;
+  private children: TouchBarColor[];
 
-  public constructor(props: TouchBarColorPickerProps) {
-    this.props = props;
+  public constructor({ children, ...props }: TouchBarColorPickerProps) {
     this.id = uuidv4();
+    this.props = props;
+    this.children = children || [];
 
     this.instance = null;
   }
 
   public appendChild(child: TouchBarColor): void {
-    if (!this.props.children) {
-      this.props.children = [];
-    }
-
-    this.props.children.push(child);
+    this.children.push(child);
   }
 
   public insertBefore(newChild: TouchBarColor, beforeChild: TouchBarColor) {
-    this.props.children = insertBeforeChild({
-      children: this.props.children || [],
+    this.children = insertBeforeChild({
+      children: this.children,
       newChild,
       beforeChild,
     });
   }
 
   public removeChild(child: TouchBarColor) {
-    this.props.children = removeChild({
-      children: this.props.children || [],
+    this.children = removeChild({
+      children: this.children,
       child,
     });
   }
@@ -62,13 +60,13 @@ class TouchBarColorPicker implements NativeTouchBarComponent {
   }
 
   private getNativeArgs(): TouchBarColorPickerConstructorOptions {
-    const { children, onChange, selected, ...props } = this.props;
+    const { onChange, selected, ...props } = this.props;
 
     return {
       ...props,
       change: onChange,
       selectedColor: selected,
-      availableColors: (children || [])
+      availableColors: this.children
         .map(child => child.createInstance())
         .filter(isTruthy),
     };

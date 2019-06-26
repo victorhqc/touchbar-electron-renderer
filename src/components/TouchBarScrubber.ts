@@ -19,10 +19,12 @@ class TouchBarScrubber implements NativeTouchBarComponent {
   private didChildrenChange: boolean;
   private instance: Maybe<NativeTouchBarScrubberIndex>;
   private builtChildrenInstances: ScrubberItem[];
+  private children: TouchBarScrubItem[];
 
-  public constructor(props: TouchBarScrubberProps) {
+  public constructor({ children, ...props }: TouchBarScrubberProps) {
     this.id = uuidv4();
     this.props = props;
+    this.children = children || [];
     this.didChildrenChange = false;
     this.instance = null;
     this.builtChildrenInstances = [];
@@ -38,12 +40,8 @@ class TouchBarScrubber implements NativeTouchBarComponent {
   }
 
   public appendChild(child: TouchBarScrubItem) {
-    if (!this.props.children) {
-      this.props.children = [];
-    }
-
     this.didChildrenChange = true;
-    this.props.children.push(child);
+    this.children.push(child);
   }
 
   public insertBefore(
@@ -51,8 +49,8 @@ class TouchBarScrubber implements NativeTouchBarComponent {
     beforeChild: TouchBarScrubItem,
   ) {
     this.didChildrenChange = true;
-    this.props.children = insertBeforeChild({
-      children: this.props.children || [],
+    this.children = insertBeforeChild({
+      children: this.children,
       newChild,
       beforeChild,
     });
@@ -60,15 +58,14 @@ class TouchBarScrubber implements NativeTouchBarComponent {
 
   public removeChild(child: TouchBarScrubItem) {
     this.didChildrenChange = true;
-    this.props.children = removeChild({
-      children: this.props.children || [],
+    this.children = removeChild({
+      children: this.children,
       child,
     });
   }
 
   private getNativeArgs(buildItems = true): TouchBarScrubberConstructorOptions {
     const {
-      children,
       onSelect,
       onHighlight,
       debounceTime,
@@ -82,7 +79,7 @@ class TouchBarScrubber implements NativeTouchBarComponent {
 
     this.builtChildrenInstances = !buildItems
       ? this.builtChildrenInstances
-      : (children || []).map(child => child.createInstance());
+      : this.children.map(child => child.createInstance());
 
     return {
       ...props,

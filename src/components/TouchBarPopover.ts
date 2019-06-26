@@ -23,10 +23,12 @@ class TouchBarPopover implements NativeTouchBarComponent {
   private didChildrenChange: boolean;
   private instance: Maybe<NativeTouchBarPopoverIndex>;
   private builtChildrenInstances: NativeTouchBarItem[];
+  private children: NativeTouchBarComponent[];
 
   public constructor(props: TouchBarPopoverProps) {
     this.id = uuidv4();
     this.props = props;
+    this.children = [];
     this.didChildrenChange = false;
     this.instance = null;
     this.builtChildrenInstances = [];
@@ -42,11 +44,7 @@ class TouchBarPopover implements NativeTouchBarComponent {
   }
 
   public appendChild(child: NativeTouchBarComponent) {
-    if (!this.props.children) {
-      this.props.children = [];
-    }
-
-    this.props.children.push(child);
+    this.children.push(child);
     this.didChildrenChange = true;
   }
 
@@ -54,8 +52,8 @@ class TouchBarPopover implements NativeTouchBarComponent {
     newChild: NativeTouchBarComponent,
     beforeChild: NativeTouchBarComponent,
   ) {
-    this.props.children = insertBeforeChild({
-      children: this.props.children || [],
+    this.children = insertBeforeChild({
+      children: this.children,
       newChild,
       beforeChild,
     });
@@ -63,19 +61,26 @@ class TouchBarPopover implements NativeTouchBarComponent {
   }
 
   public removeChild(child: NativeTouchBarComponent) {
-    this.props.children = removeChild({
-      children: this.props.children || [],
+    this.children = removeChild({
+      children: this.children,
       child,
     });
     this.didChildrenChange = true;
   }
 
   private getNativeArgs(buildItems = true) {
-    const { children, hideCloseButton, ...props } = this.props;
+    const { hideCloseButton, ...props } = this.props;
 
+    // TODO: Figure out why some children are react components already.
+    // This means that `createInstance` does not exist!
     this.builtChildrenInstances = !buildItems
       ? this.builtChildrenInstances
-      : (children || []).map(child => child.createInstance()).filter(isTruthy);
+      : this.children
+          .filter(child => child.createInstance)
+          .map(child => {
+            return child.createInstance();
+          })
+          .filter(isTruthy);
 
     return {
       ...props,

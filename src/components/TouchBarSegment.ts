@@ -9,10 +9,12 @@ export default class TouchBarSegment implements InternalTouchBarComponent {
   public id: string;
   private props: TouchBarSegmentProps;
   private instance: Maybe<SegmentedControlSegmentIndex>;
+  private children: TouchBarText | undefined;
 
-  public constructor(props: TouchBarSegmentProps) {
+  public constructor({ children, ...props }: TouchBarSegmentProps) {
     this.id = uuidv4();
     this.props = props;
+    this.children = children;
 
     this.instance = null;
   }
@@ -27,7 +29,7 @@ export default class TouchBarSegment implements InternalTouchBarComponent {
   }
 
   public appendChild(label: TouchBarText) {
-    this.props.children = label;
+    this.children = label;
   }
 
   public insertBefore(label: TouchBarText) {
@@ -39,16 +41,16 @@ export default class TouchBarSegment implements InternalTouchBarComponent {
   }
 
   public removeChild() {
-    this.props.children = undefined;
+    this.children = undefined;
   }
 
   private getNativeArgs(): SegmentedControlSegmentIndex {
-    const { children, disabled, ...props } = this.props;
+    const { disabled, ...props } = this.props;
 
     return {
       ...props,
       enabled: disabled ? false : true, // When disabled is truthy, then `enabled` is false.
-      label: children && children.createInstance(),
+      label: this.children && this.children.createInstance(),
     };
   }
 

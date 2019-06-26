@@ -5,15 +5,15 @@ import { ComponentProps, InternalTouchBarComponent } from './types';
 
 class TouchBarColor implements InternalTouchBarComponent {
   public id: string;
-  private props: TouchBarColorProps;
+  private children: TouchBarText | undefined;
 
-  public constructor(props: TouchBarColorProps) {
+  public constructor({ children }: TouchBarColorProps) {
     this.id = uuidv4();
-    this.props = props;
+    this.children = children;
   }
 
   public appendChild(text: TouchBarText) {
-    this.props.children = text;
+    this.children = text;
   }
 
   public insertBefore(text: TouchBarText) {
@@ -21,23 +21,21 @@ class TouchBarColor implements InternalTouchBarComponent {
   }
 
   public update({ newProps }: { newProps: TouchBarColorProps }): boolean {
-    this.props = newProps;
-
-    if (this.props.children) {
-      this.appendChild(this.props.children);
+    if (newProps.children) {
+      this.appendChild(newProps.children);
     }
 
     return false;
   }
 
   public removeChild() {
-    this.props.children = undefined;
+    this.children = undefined;
   }
 
   public createInstance() {
-    if (!this.props.children) return null;
+    if (!this.children) return null;
 
-    return this.props.children.createInstance();
+    return this.children.createInstance();
   }
 }
 

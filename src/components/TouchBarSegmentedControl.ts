@@ -19,10 +19,12 @@ export default class TouchBarSegmentedControl
   private instance: Maybe<NativeTouchBarSegmentedControlIndex>;
   private didChildrenChange: boolean;
   private builtChildrenInstances: SegmentedControlSegment[];
+  private children: TouchBarSegment[];
 
-  public constructor(props: TouchBarSegmentedControlProps) {
+  public constructor({ children, ...props }: TouchBarSegmentedControlProps) {
     this.id = uuidv4();
     this.props = props;
+    this.children = children || [];
 
     this.instance = null;
     this.didChildrenChange = false;
@@ -39,21 +41,13 @@ export default class TouchBarSegmentedControl
   }
 
   public appendChild(child: TouchBarSegment) {
-    if (!this.props.children) {
-      this.props.children = [];
-    }
-
-    this.props.children.push(child);
+    this.children.push(child);
     this.didChildrenChange = true;
   }
 
   public insertBefore(newChild: TouchBarSegment, beforeChild: TouchBarSegment) {
-    if (!this.props.children) {
-      this.props.children = [];
-    }
-
-    this.props.children = insertBeforeChild({
-      children: this.props.children,
+    this.children = insertBeforeChild({
+      children: this.children,
       newChild,
       beforeChild,
     });
@@ -61,12 +55,8 @@ export default class TouchBarSegmentedControl
   }
 
   public removeChild(child: TouchBarSegment) {
-    if (!this.props.children) {
-      this.props.children = [];
-    }
-
-    this.props.children = removeChild({
-      children: this.props.children,
+    this.children = removeChild({
+      children: this.children,
       child,
     });
     this.didChildrenChange = true;
@@ -77,7 +67,7 @@ export default class TouchBarSegmentedControl
       return this.builtChildrenInstances;
     }
 
-    return (this.props.children || []).map(child => child.createInstance());
+    return this.children.map(child => child.createInstance());
   }
 
   private getNativeArgs(

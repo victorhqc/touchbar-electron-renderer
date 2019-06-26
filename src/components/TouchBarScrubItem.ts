@@ -9,15 +9,17 @@ class TouchBarScrubItem implements InternalTouchBarComponent {
   public id: string;
   private props: TouchBarScrubItemProps;
   private instance: Maybe<ScrubberItemIndex>;
+  private children: TouchBarText | undefined;
 
-  public constructor(props: TouchBarScrubItemProps) {
+  public constructor({ children, ...props }: TouchBarScrubItemProps) {
     this.id = uuidv4();
     this.props = props;
+    this.children = children;
     this.instance = null;
   }
 
   public appendChild(child: TouchBarText): void {
-    this.props.children = child;
+    this.children = child;
   }
 
   public insertBefore(child: TouchBarText): void {
@@ -25,7 +27,7 @@ class TouchBarScrubItem implements InternalTouchBarComponent {
   }
 
   public removeChild() {
-    this.props.children = undefined;
+    this.children = undefined;
   }
 
   public update({ newProps }: { newProps: TouchBarScrubItemProps }) {
@@ -41,11 +43,9 @@ class TouchBarScrubItem implements InternalTouchBarComponent {
   }
 
   private getNativeArgs(): ScrubberItemIndex {
-    const { children, ...props } = this.props;
-
     return {
-      ...props,
-      label: children && children.createInstance(),
+      ...this.props,
+      label: this.children && this.children.createInstance(),
     };
   }
 
@@ -63,11 +63,9 @@ class TouchBarScrubItem implements InternalTouchBarComponent {
   }
 
   public createInstance() {
-    const { children, ...props } = this.props;
-
     this.instance = {
-      ...props,
-      label: children && children.createInstance(),
+      ...this.props,
+      label: this.children && this.children.createInstance(),
     };
 
     return this.instance;

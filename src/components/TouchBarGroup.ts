@@ -11,13 +11,13 @@ import { ComponentProps, NativeTouchBarComponent } from './types';
 
 class TouchBarGroup implements NativeTouchBarComponent {
   public id: string;
-  private props: TouchBarGroupProps;
   private didChildrenChange: boolean;
   private instance: Maybe<NativeTouchBarGroup>;
+  private children: NativeTouchBarComponent[];
 
-  public constructor(props: TouchBarGroupProps) {
+  public constructor() {
     this.id = uuidv4();
-    this.props = props;
+    this.children = [];
 
     this.didChildrenChange = false;
     this.instance = null;
@@ -28,20 +28,16 @@ class TouchBarGroup implements NativeTouchBarComponent {
   }
 
   public appendChild(child: NativeTouchBarComponent) {
-    if (!this.props.children) {
-      this.props.children = [];
-    }
-
     this.didChildrenChange = true;
-    this.props.children.push(child);
+    this.children.push(child);
   }
 
   public insertBefore(
     newChild: NativeTouchBarComponent,
     beforeChild: NativeTouchBarComponent,
   ) {
-    this.props.children = insertBeforeChild({
-      children: this.props.children || [],
+    this.children = insertBeforeChild({
+      children: this.children,
       newChild,
       beforeChild,
     });
@@ -50,8 +46,8 @@ class TouchBarGroup implements NativeTouchBarComponent {
   }
 
   public removeChild(child: NativeTouchBarComponent) {
-    this.props.children = removeChild({
-      children: this.props.children || [],
+    this.children = removeChild({
+      children: this.children,
       child,
     });
 
@@ -69,7 +65,7 @@ class TouchBarGroup implements NativeTouchBarComponent {
   }
 
   public createInstance() {
-    const nativeChildren = (this.props.children || [])
+    const nativeChildren = this.children
       .map(child => child.createInstance())
       .filter(isTruthy);
 

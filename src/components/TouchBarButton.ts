@@ -13,16 +13,18 @@ class TouchBarButton implements NativeTouchBarComponent {
   public id: string;
   private props: TouchBarButtonProps;
   private instance: Maybe<NativeTouchBarButtonWithIndex>;
+  private children: TouchBarText | undefined;
 
-  public constructor(props: TouchBarButtonProps) {
+  public constructor({ children, ...props }: TouchBarButtonProps) {
     this.props = props;
+    this.children = children;
     this.id = uuidv4();
 
     this.instance = null;
   }
 
   public appendChild(child: TouchBarText): void {
-    this.props.children = child;
+    this.children = child;
   }
 
   public insertBefore(child: TouchBarText) {
@@ -30,7 +32,7 @@ class TouchBarButton implements NativeTouchBarComponent {
   }
 
   public removeChild() {
-    this.props.children = undefined;
+    this.children = undefined;
   }
 
   public update({ newProps }: { newProps: TouchBarButtonProps }) {
@@ -42,11 +44,11 @@ class TouchBarButton implements NativeTouchBarComponent {
   }
 
   public getNativeArgs(): TouchBarButtonConstructorOptions {
-    const { children, onClick, ...props } = this.props;
+    const { onClick, ...props } = this.props;
 
     return {
       ...props,
-      label: children && children.createInstance(),
+      label: this.children && this.children.createInstance(),
       click: onClick,
     };
   }

@@ -15,10 +15,12 @@ class TouchBarSlider implements NativeTouchBarComponent {
   public id: string;
   private props: TouchBarSliderProps;
   private instance: Maybe<NativeTouchBarSliderIndex>;
+  private children: TouchBarText | undefined;
 
-  public constructor(props: TouchBarSliderProps) {
+  public constructor({ children, ...props }: TouchBarSliderProps) {
     this.id = uuidv4();
     this.props = props;
+    this.children = children;
 
     this.instance = null;
   }
@@ -33,7 +35,7 @@ class TouchBarSlider implements NativeTouchBarComponent {
   }
 
   public appendChild(child: TouchBarText) {
-    this.props.children = child;
+    this.children = child;
   }
 
   public insertBefore(child: TouchBarText) {
@@ -41,15 +43,15 @@ class TouchBarSlider implements NativeTouchBarComponent {
   }
 
   public removeChild() {
-    this.props.children = undefined;
+    this.children = undefined;
   }
 
   private getNativeArgs(): TouchBarSliderConstructorOptions {
-    const { children, onChange, ...props } = this.props;
+    const { onChange, ...props } = this.props;
 
     return {
       ...props,
-      label: children && children.createInstance(),
+      label: this.children && this.children.createInstance(),
       // If not debounced, it causes serious performance issues
       change: onChange && debounce(onChange, props.debounceTime || 0),
     };

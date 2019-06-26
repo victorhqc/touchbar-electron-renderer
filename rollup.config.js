@@ -10,7 +10,7 @@ import typescript from 'rollup-plugin-typescript2';
 import pkg from './package.json';
 
 const config = {
-  input: './src/index.js',
+  input: './src/index.ts',
   output: [
     {
       file: pkg.main,

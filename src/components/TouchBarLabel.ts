@@ -13,24 +13,26 @@ class TouchBarLabel implements NativeTouchBarComponent {
   public id: string;
   private props: TouchBarLabelProps;
   private instance: Maybe<NativeTouchBarLabelIndex>;
+  private children: TouchBarText | undefined;
 
-  public constructor(props: TouchBarLabelProps) {
-    this.props = props;
+  public constructor({ children, ...props }: TouchBarLabelProps) {
     this.id = uuidv4();
+    this.props = props;
+    this.children = children;
 
     this.instance = null;
   }
 
   public appendChild(text: TouchBarText): void {
-    this.props.children = text;
+    this.children = text;
   }
 
   public insertBefore(text: TouchBarText): void {
-    this.props.children = text;
+    this.children = text;
   }
 
   public removeChild() {
-    this.props.children = undefined;
+    this.children = undefined;
   }
 
   public update({ newProps }: { newProps: TouchBarLabelProps }) {
@@ -46,12 +48,12 @@ class TouchBarLabel implements NativeTouchBarComponent {
   }
 
   private getNativeArgs(): TouchBarLabelConstructorOptions {
-    const { children, color, ...props } = this.props;
+    const { color, ...props } = this.props;
 
     return {
       ...props,
       textColor: color,
-      label: (children && children.createInstance()) || '',
+      label: (this.children && this.children.createInstance()) || '',
     };
   }
 
