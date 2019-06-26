@@ -13,8 +13,8 @@ import {
 } from '../utils';
 import {
   TouchbarElement,
-  ValidTouchBarElement,
-  TouchBarValidItems,
+  TouchBarComponent,
+  NativeTouchBarValidItems,
 } from './types';
 
 class TouchBarPopover implements TouchbarElement<TouchBarPopoverProps> {
@@ -22,7 +22,7 @@ class TouchBarPopover implements TouchbarElement<TouchBarPopoverProps> {
   private props: TouchBarPopoverProps;
   private didChildrenChange: boolean;
   private instance: Maybe<NativeTouchBarPopoverIndex>;
-  private builtChildrenInstances: TouchBarValidItems[];
+  private builtChildrenInstances: NativeTouchBarValidItems[];
 
   private constructor(props: TouchBarPopoverProps) {
     this.id = uuidv4();
@@ -41,7 +41,7 @@ class TouchBarPopover implements TouchbarElement<TouchBarPopoverProps> {
     return this.updateInstance();
   }
 
-  public appendChild(child: ValidTouchBarElement) {
+  public appendChild(child: TouchBarComponent) {
     if (!this.props.children) {
       this.props.children = [];
     }
@@ -51,8 +51,8 @@ class TouchBarPopover implements TouchbarElement<TouchBarPopoverProps> {
   }
 
   public insertBefore(
-    newChild: ValidTouchBarElement,
-    beforeChild: ValidTouchBarElement,
+    newChild: TouchBarComponent,
+    beforeChild: TouchBarComponent,
   ) {
     this.props.children = insertBeforeChild({
       children: this.props.children || [],
@@ -62,7 +62,7 @@ class TouchBarPopover implements TouchbarElement<TouchBarPopoverProps> {
     this.didChildrenChange = true;
   }
 
-  public removeChild(child: ValidTouchBarElement) {
+  public removeChild(child: TouchBarComponent) {
     this.props.children = removeChild({
       children: this.props.children || [],
       child,
@@ -131,7 +131,7 @@ export interface TouchBarPopoverProps {
   label?: string;
   icon?: NativeImage;
   hideCloseButton?: boolean;
-  children?: ValidTouchBarElement[];
+  children?: TouchBarComponent[];
 }
 
 interface NativeTouchBarPopoverIndex extends NativeTouchBarPopover, WithIndex {}

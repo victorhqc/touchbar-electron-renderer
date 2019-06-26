@@ -12,15 +12,6 @@ import {
   SegmentedControlSegment,
 } from 'electron';
 
-// import TouchBarText from './TouchBarText';
-// import TouchBarButton from './TouchBarButton';
-// import TouchBarColor from './TouchBarColor';
-// import TouchBarColorPicker from './TouchBarColorPicker';
-// import TouchBarLabel from './TouchBarLabel';
-// import TouchBarScrubber from './TouchBarScrubber';
-// import TouchBarScrubItem from './TouchBarScrubItem';
-// import TouchBarSegment from './TouchBarSegment';
-
 export interface WithId {
   id: string;
 }
@@ -29,15 +20,15 @@ export interface TouchBarTextInterface extends WithId {
   replaceText(text: string): void;
 }
 
-export interface ValidTouchBarElement extends WithId {
+export interface TouchBarComponent extends WithId {
   appendChild(child: WithId): void;
   insertBefore(newChild: WithId, beforeChild: WithId): void;
   removeChild(child: WithId): void;
 
-  createInstance(): Maybe<TouchBarValidItems>;
+  createInstance(): Maybe<NativeTouchBarValidItems>;
 }
 
-export interface TouchbarElement<T> extends ValidTouchBarElement {
+export interface TouchbarElement<T> extends TouchBarComponent {
   update(args: { newProps: T }): boolean;
 }
 
@@ -50,7 +41,7 @@ export interface TouchBarInternalElement<T> extends WithId {
   createInstance(): Maybe<string | ScrubberItem | SegmentedControlSegment>;
 }
 
-export type TouchBarValidItems =
+export type NativeTouchBarValidItems =
   | (NativeTouchBarButton)
   | (NativeTouchBarColorPicker)
   | (NativeTouchBarGroup)
@@ -60,13 +51,3 @@ export type TouchBarValidItems =
   | (NativeTouchBarSegmentedControl)
   | (NativeTouchBarSlider)
   | (NativeTouchBarSpacer);
-
-// export type validChildren =
-//   | (TouchBarText)
-//   | (TouchBarButton)
-//   | (TouchBarColor)
-//   | (TouchBarColorPicker)
-//   | (TouchBarLabel)
-//   | (TouchBarScrubber)
-//   | (TouchBarScrubItem)
-//   | (TouchBarSegment);
