@@ -3,14 +3,17 @@
     "declaration": true,
     "declarationDir": "./dist",
     "outDir": "./dist",
-    "module": "es6",
+    "module": "ES2015",
     "moduleResolution": "node",
-    "noImplicitAny": true,
-    "noUnusedLocals": true,
-    "noFallthroughCasesInSwitch": true,
-    "target": "es5",
-    "allowSyntheticDefaultImports": true,
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "inlineSourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es5"
   },
   "include": [
     "src/**/*"
