@@ -2,7 +2,7 @@ import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 import { TouchBarColorPicker as NativeTouchBarColorPicker, TouchBarColorPickerConstructorOptions } from 'electron';
 
-import { insertBeforeChild, removeChild, getNativeTouchBar } from '../utils';
+import { isTruthy, insertBeforeChild, removeChild, getNativeTouchBar } from '../utils';
 import TouchBarColor from './TouchBarColor';
 import { TouchbarElement } from './types';
 
@@ -18,14 +18,12 @@ function isValidChild(child: TouchBarColor) {
 class TouchBarColorPicker implements TouchbarElement<Maybe<NativeTouchBarColorPicker>> {
   props: TouchBarColorPickerProps;
   id: string;
-  children: TouchBarColor[];
   instance: Maybe<NativeTouchBarColorPickerWithIndex>;
 
-  constructor({ children, ...props }: TouchBarColorPickerProps) {
+  constructor(props: TouchBarColorPickerProps) {
     this.props = props;
     this.id = uuidv4();
 
-    this.children = children || [];
     this.instance = null;
   }
 
@@ -40,7 +38,7 @@ class TouchBarColorPicker implements TouchbarElement<Maybe<NativeTouchBarColorPi
       return;
     }
 
-    this.children.push(child);
+    (this.props.children || []).push(child);
   }
 
   insertBefore(newChild: TouchBarColor, beforeChild: TouchBarColor) {
@@ -48,16 +46,16 @@ class TouchBarColorPicker implements TouchbarElement<Maybe<NativeTouchBarColorPi
       return;
     }
 
-    this.children = insertBeforeChild({
-      children: this.children,
+    this.props.children = insertBeforeChild({
+      children: this.props.children || [],
       newChild,
       beforeChild,
     });
   }
 
   removeChild(child: TouchBarColor) {
-    this.children = removeChild({
-      children: this.children,
+    this.props.children = removeChild({
+      children: this.props.children || [],
       child,
     });
   }
@@ -81,8 +79,9 @@ class TouchBarColorPicker implements TouchbarElement<Maybe<NativeTouchBarColorPi
       ...props,
       change: onChange,
       selectedColor: selected,
-      availableColors: this.children
+      availableColors: (children || [])
         .map(child => child.createInstance())
+        .filter(isTruthy)
     };
   }
 

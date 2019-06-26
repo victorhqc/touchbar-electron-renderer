@@ -1,38 +1,32 @@
-import { NativeImage, TouchBarButton as TouchBarNativeButton, TouchBarButtonConstructorOptions } from 'electron'
+import { NativeImage, TouchBarButton as NativeTouchBarButton, TouchBarButtonConstructorOptions } from 'electron'
 import uuidv4 from 'uuid/v4';
 
 import { getNativeTouchBar } from '../utils';
+import { TouchbarElement } from './types';
+import TouchBarText from './TouchBarText';
 
-class TouchBarButton {
+class TouchBarButton implements TouchbarElement<Maybe<NativeTouchBarButton>> {
   id: string;
   props: TouchBarButtonProps;
-  child?: string;
   instance: Maybe<NativeTouchBarButtonWithIndex>;
 
   constructor(props: TouchBarButtonProps) {
     this.props = props;
     this.id = uuidv4();
 
-    // TouchBarButton can have only one child.
-    this.child = undefined;
     this.instance = null;
   }
 
-  /**
-   * TouchBarButton can only have text children.
-   * @param  {stting} child
-   * @return {void}
-   */
-  appendChild(child: string): void {
-    this.child = child;
+  appendChild(child: TouchBarText): void {
+    this.props.children = child;
   }
 
-  insertBefore(child: string) {
+  insertBefore(child: TouchBarText) {
     return this.appendChild(child);
   }
 
   removeChild() {
-    this.child = undefined;
+    this.props.children = undefined;
   }
 
   update({ newProps }: { newProps: TouchBarButtonProps }) {
@@ -45,15 +39,14 @@ class TouchBarButton {
 
   getNativeArgs(): TouchBarConstructorOptionsWithIndex {
     const {
-      // TODO: check if this is needed.
-      // children,
+      children,
       onClick,
       ...props
     } = this.props;
 
     return {
       ...props,
-      label: this.child,
+      label: children && children.createInstance(),
       click: onClick,
     };
   }
@@ -85,11 +78,11 @@ class TouchBarButton {
 export default TouchBarButton;
 
 export interface TouchBarButtonProps {
-  onClick?:() => void,
-  icon?: NativeImage,
-  IconPosition?:IconPosition,
-  backgroundColor?: string
-  // children: MaybeUndefined<string[]>
+  onClick?:() => void;
+  icon?: NativeImage;
+  IconPosition?:IconPosition;
+  backgroundColor?: string;
+  children?: TouchBarText;
 }
 
 export enum IconPosition {
@@ -99,4 +92,4 @@ export enum IconPosition {
 };
 
 interface TouchBarConstructorOptionsWithIndex extends TouchBarButtonConstructorOptions, WithIndex {}
-interface NativeTouchBarButtonWithIndex extends TouchBarNativeButton, WithIndex {}
+interface NativeTouchBarButtonWithIndex extends NativeTouchBarButton, WithIndex {}

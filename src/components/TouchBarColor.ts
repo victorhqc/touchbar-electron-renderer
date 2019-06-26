@@ -3,13 +3,13 @@ import uuidv4 from 'uuid/v4';
 import TouchBarText from './TouchBarText';
 import { TouchbarElement } from './types';
 
-class TouchBarColor implements TouchbarElement<string> {
+class TouchBarColor implements TouchbarElement<string | undefined> {
   id: string;
-  text: Maybe<TouchBarText>;
+  props: TouchBarColorProps;
 
-  constructor(text: TouchBarText) {
+  constructor(props: TouchBarColorProps) {
     this.id = uuidv4();
-    this.text = this.appendChild(text);
+    this.props = props;
   }
 
   // Text can have only one child.
@@ -20,30 +20,32 @@ class TouchBarColor implements TouchbarElement<string> {
       && !text as any instanceof TouchBarText
     ) {
       console.warn(`<color /> child should be string, but received ${typeof text}`);
-      return new TouchBarText('');
+      return;
     }
 
-    return text;
+    this.props.children = text;
   }
 
   insertBefore(text: TouchBarText) {
-    this.text = this.appendChild(text);
-    return this.text;
+    this.appendChild(text);
   }
 
   replaceText(text: TouchBarText) {
-    this.text = this.appendChild(text);
-    return this.text;
+    this.appendChild(text);
   }
 
   removeChild() {
-    this.text = null;
+    this.props.children = undefined;
   }
 
   createInstance() {
-    if (!this.text) return '';
-    return this.text.createInstance();
+    if (!this.props.children) return;
+    return this.props.children.createInstance();
   }
 }
 
 export default TouchBarColor;
+
+export interface TouchBarColorProps {
+  children?: TouchBarText;
+}
