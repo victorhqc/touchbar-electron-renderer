@@ -13,7 +13,7 @@ import { TouchbarElement } from './types';
 const nop = () => {};
 
 export default class TouchBarSegmentedControl
-  implements TouchbarElement<Maybe<NativeTouchBarSegmentedControl>> {
+  implements TouchbarElement<TouchBarSegmentedControlProps> {
   public id: string;
   private props: TouchBarSegmentedControlProps;
   private instance: Maybe<NativeTouchBarSegmentedControlIndex>;
@@ -31,7 +31,7 @@ export default class TouchBarSegmentedControl
 
   public update({ newProps }: { newProps: TouchBarSegmentedControlProps }) {
     if (isEqual(newProps, this.props)) {
-      return;
+      return false;
     }
 
     this.props = newProps;

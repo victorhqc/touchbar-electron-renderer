@@ -9,7 +9,7 @@ import { getNativeTouchBar } from '../utils';
 import { TouchbarElement } from './types';
 import TouchBarText from './TouchBarText';
 
-class TouchBarButton implements TouchbarElement<Maybe<NativeTouchBarButton>> {
+class TouchBarButton implements TouchbarElement<TouchBarButtonProps> {
   public id: string;
   private props: TouchBarButtonProps;
   private instance: Maybe<NativeTouchBarButtonWithIndex>;
@@ -26,7 +26,7 @@ class TouchBarButton implements TouchbarElement<Maybe<NativeTouchBarButton>> {
   }
 
   public insertBefore(child: TouchBarText) {
-    return this.appendChild(child);
+    this.appendChild(child);
   }
 
   public removeChild() {

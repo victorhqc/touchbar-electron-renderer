@@ -13,8 +13,7 @@ import { TouchbarElement } from './types';
 
 const nop = () => {};
 
-class TouchBarScrubber
-  implements TouchbarElement<Maybe<NativeTouchBarScrubber>> {
+class TouchBarScrubber implements TouchbarElement<TouchBarScrubberProps> {
   public id: string;
   private props: TouchBarScrubberProps;
   private didChildrenChange: boolean;
@@ -31,7 +30,7 @@ class TouchBarScrubber
 
   public update({ newProps }: { newProps: TouchBarScrubberProps }) {
     if (isEqual(newProps, this.props)) {
-      return;
+      return false;
     }
 
     this.props = newProps;

@@ -12,10 +12,10 @@ import {
   getNativeTouchBar,
 } from '../utils';
 import TouchBarColor from './TouchBarColor';
+// import TouchBarText from './TouchBarText';
 import { TouchbarElement } from './types';
 
-class TouchBarColorPicker
-  implements TouchbarElement<Maybe<NativeTouchBarColorPicker>> {
+class TouchBarColorPicker implements TouchbarElement<TouchBarColorPickerProps> {
   public id: string;
   private props: TouchBarColorPickerProps;
   private instance: Maybe<NativeTouchBarColorPickerWithIndex>;
@@ -48,7 +48,7 @@ class TouchBarColorPicker
 
   public update({ newProps }: { newProps: TouchBarColorPickerProps }) {
     if (isEqual(newProps, this.props)) {
-      return;
+      return false;
     }
 
     this.props = newProps;

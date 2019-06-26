@@ -24,7 +24,7 @@ const getSize = ({ small, large, flexible }: TouchBarSpacerProps) => {
   return undefined;
 };
 
-class TouchBarSpacer implements TouchbarElement {
+class TouchBarSpacer implements TouchbarElement<TouchBarSpacerProps> {
   public id: string;
   private props: TouchBarSpacerProps;
   private instance: Maybe<NativeTouchBarSpacerIndex>;
@@ -38,7 +38,7 @@ class TouchBarSpacer implements TouchbarElement {
 
   public update({ newProps }: { newProps: TouchBarSpacerProps }) {
     if (isEqual(newProps, this.props)) {
-      return;
+      return false;
     }
 
     this.props = newProps;

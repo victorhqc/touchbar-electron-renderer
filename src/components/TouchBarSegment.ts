@@ -6,7 +6,7 @@ import TouchBarText from './TouchBarText';
 import { TouchbarElement } from './types';
 
 export default class TouchBarSegment
-  implements TouchbarElement<Maybe<SegmentedControlSegment>> {
+  implements TouchbarElement<TouchBarSegmentProps> {
   public id: string;
   private props: TouchBarSegmentProps;
   private instance: Maybe<SegmentedControlSegmentIndex>;
@@ -20,7 +20,7 @@ export default class TouchBarSegment
 
   public update({ newProps }: { newProps: TouchBarSegmentProps }) {
     if (isEqual(newProps, this.props)) {
-      return;
+      return false;
     }
 
     this.props = newProps;

@@ -3,7 +3,7 @@ import uuidv4 from 'uuid/v4';
 import TouchBarText from './TouchBarText';
 import { TouchbarElement } from './types';
 
-class TouchBarColor implements TouchbarElement<string | undefined> {
+class TouchBarColor implements TouchbarElement<TouchBarColorProps> {
   public id: string;
   private props: TouchBarColorProps;
 
@@ -20,8 +20,14 @@ class TouchBarColor implements TouchbarElement<string | undefined> {
     this.appendChild(text);
   }
 
-  public replaceText(text: TouchBarText) {
-    this.appendChild(text);
+  public update({ newProps }: { newProps: TouchBarColorProps }): boolean {
+    this.props = newProps;
+
+    if (this.props.children) {
+      this.appendChild(this.props.children);
+    }
+
+    return false;
   }
 
   public removeChild() {
@@ -29,7 +35,8 @@ class TouchBarColor implements TouchbarElement<string | undefined> {
   }
 
   public createInstance() {
-    if (!this.props.children) return;
+    if (!this.props.children) return null;
+
     return this.props.children.createInstance();
   }
 }

@@ -5,7 +5,7 @@ import isEqual from 'lodash/isEqual';
 import TouchBarText from './TouchBarText';
 import { TouchbarElement } from './types';
 
-class TouchBarScrubItem implements TouchbarElement<Maybe<ScrubberItem>> {
+class TouchBarScrubItem implements TouchbarElement<TouchBarScrubItemProps> {
   public id: string;
   private props: TouchBarScrubItemProps;
   private instance: Maybe<ScrubberItemIndex>;
@@ -30,7 +30,7 @@ class TouchBarScrubItem implements TouchbarElement<Maybe<ScrubberItem>> {
 
   public update({ newProps }: { newProps: TouchBarScrubItemProps }) {
     if (isEqual(newProps, this.props)) {
-      return;
+      return false;
     }
 
     this.props = newProps;
@@ -67,7 +67,7 @@ class TouchBarScrubItem implements TouchbarElement<Maybe<ScrubberItem>> {
 
     this.instance = {
       ...props,
-      label: (children && children.createInstance()) || '',
+      label: children && children.createInstance(),
     };
 
     return this.instance;

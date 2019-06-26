@@ -11,7 +11,7 @@ import { getNativeTouchBar } from '../utils';
 import TouchBarText from './TouchBarText';
 import { TouchbarElement } from './types';
 
-class TouchBarSlider implements TouchbarElement<Maybe<NativeTouchBarSlider>> {
+class TouchBarSlider implements TouchbarElement<TouchBarSliderProps> {
   public id: string;
   private props: TouchBarSliderProps;
   private instance: Maybe<NativeTouchBarSliderIndex>;
@@ -25,7 +25,7 @@ class TouchBarSlider implements TouchbarElement<Maybe<NativeTouchBarSlider>> {
 
   public update({ newProps }: { newProps: TouchBarSliderProps }) {
     if (isEqual(newProps, this.props)) {
-      return;
+      return false;
     }
 
     this.props = newProps;

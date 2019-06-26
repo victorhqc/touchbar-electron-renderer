@@ -9,7 +9,7 @@ import { getNativeTouchBar } from '../utils';
 import { TouchbarElement } from './types';
 import TouchBarText from './TouchBarText';
 
-class TouchBarLabel implements TouchbarElement<Maybe<NativeTouchBarLabel>> {
+class TouchBarLabel implements TouchbarElement<TouchBarLabelProps> {
   public id: string;
   private props: TouchBarLabelProps;
   private instance: Maybe<NativeTouchBarLabelIndex>;
@@ -35,7 +35,7 @@ class TouchBarLabel implements TouchbarElement<Maybe<NativeTouchBarLabel>> {
 
   public update({ newProps }: { newProps: TouchBarLabelProps }) {
     if (isEqual(newProps, this.props)) {
-      return;
+      return false;
     }
 
     this.props = newProps;
