@@ -1,9 +1,9 @@
 import uuidv4 from 'uuid/v4';
 
 import TouchBarText from './TouchBarText';
-import { TouchbarElement } from './types';
+import { TouchBarInternalElement } from './types';
 
-class TouchBarColor implements TouchbarElement<TouchBarColorProps> {
+class TouchBarColor implements TouchBarInternalElement<TouchBarColorProps> {
   public id: string;
   private props: TouchBarColorProps;
 

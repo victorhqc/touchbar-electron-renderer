@@ -3,10 +3,10 @@ import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 
 import TouchBarText from './TouchBarText';
-import { TouchbarElement } from './types';
+import { TouchBarInternalElement } from './types';
 
 export default class TouchBarSegment
-  implements TouchbarElement<TouchBarSegmentProps> {
+  implements TouchBarInternalElement<TouchBarSegmentProps> {
   public id: string;
   private props: TouchBarSegmentProps;
   private instance: Maybe<SegmentedControlSegmentIndex>;

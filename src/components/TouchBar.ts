@@ -1,15 +1,25 @@
-import { TouchBar as TouchBarType, BrowserWindow } from 'electron';
+import { BrowserWindow, TouchBar as NativeTouchBar } from 'electron';
 
-import { insertBeforeChild, removeChild, setNativeTouchBar, getNativeTouchBar } from '../utils';
-import { TouchbarElement } from './types'
+import {
+  insertBeforeChild,
+  removeChild,
+  setNativeTouchBar,
+  getNativeTouchBar,
+  isTruthy,
+  TouchBarType,
+} from '../utils';
+import { ValidTouchBarElement } from './types';
 
 class TouchBar {
-  children: TouchbarElement[];
-  didChildrenChange: boolean;
-  electronWindow: BrowserWindow;
-  instance: Maybe<TouchBarType>;
+  private children: ValidTouchBarElement[];
+  private didChildrenChange: boolean;
+  private electronWindow: BrowserWindow;
+  private instance: Maybe<NativeTouchBar>;
 
-  constructor(electronWindow: BrowserWindow, NativeTouchBar: TouchBarType) {
+  private constructor(
+    electronWindow: BrowserWindow,
+    NativeTouchBar: TouchBarType,
+  ) {
     this.children = [];
     this.didChildrenChange = false;
     this.electronWindow = electronWindow;
@@ -17,7 +27,7 @@ class TouchBar {
     setNativeTouchBar(NativeTouchBar);
   }
 
-  appendChild(child: TouchbarElement) {
+  public appendChild(child: ValidTouchBarElement) {
     if (!child) {
       return;
     }
@@ -26,7 +36,10 @@ class TouchBar {
     this.didChildrenChange = true;
   }
 
-  insertBefore(newChild: TouchbarElement, beforeChild: TouchbarElement) {
+  public insertBefore(
+    newChild: ValidTouchBarElement,
+    beforeChild: ValidTouchBarElement,
+  ) {
     this.children = insertBeforeChild({
       children: this.children,
       newChild,
@@ -35,7 +48,7 @@ class TouchBar {
     this.didChildrenChange = true;
   }
 
-  removeChild(child: TouchbarElement) {
+  public removeChild(child: ValidTouchBarElement) {
     this.children = removeChild({
       children: this.children,
       child,
@@ -43,14 +56,21 @@ class TouchBar {
     this.didChildrenChange = true;
   }
 
-  createInitialInstance() {
-    const nativeChildren = this.children.map(child => child.createInstance());
+  public createInitialInstance() {
+    const nativeChildren = this.children
+      .map(child => child.createInstance())
+      .filter(isTruthy);
+
     const args = {
       items: nativeChildren,
     };
 
     const NativeTouchBar = getNativeTouchBar();
+    if (!NativeTouchBar) return null;
+
     this.instance = new NativeTouchBar(args);
+    if (!this.instance) return null;
+
     this.electronWindow.setTouchBar(this.instance);
 
     this.didChildrenChange = false;
@@ -58,14 +78,14 @@ class TouchBar {
   }
 
   // TODO: Delete me.
-  updateInstance() {
+  public updateInstance() {
     this.children.map(child => child.createInstance());
     this.didChildrenChange = false;
     return this.instance;
   }
 
   // TODO: Delete me.
-  createInstance() {
+  public createInstance() {
     if (!this.instance || this.didChildrenChange) {
       return this.createInitialInstance();
     }
@@ -73,7 +93,7 @@ class TouchBar {
     return this.updateInstance();
   }
 
-  refreshTree(isReRenderNeeded: boolean) {
+  public refreshTree(isReRenderNeeded: boolean) {
     // Only create new touchbar when
     // - toucbbar is new.
     // - new nodes were added.
@@ -81,6 +101,8 @@ class TouchBar {
     if (!this.instance || this.didChildrenChange || isReRenderNeeded) {
       return this.createInitialInstance();
     }
+
+    return null;
   }
 }
 

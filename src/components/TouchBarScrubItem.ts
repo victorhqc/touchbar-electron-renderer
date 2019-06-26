@@ -3,9 +3,10 @@ import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 
 import TouchBarText from './TouchBarText';
-import { TouchbarElement } from './types';
+import { TouchBarInternalElement } from './types';
 
-class TouchBarScrubItem implements TouchbarElement<TouchBarScrubItemProps> {
+class TouchBarScrubItem
+  implements TouchBarInternalElement<TouchBarScrubItemProps> {
   public id: string;
   private props: TouchBarScrubItemProps;
   private instance: Maybe<ScrubberItemIndex>;

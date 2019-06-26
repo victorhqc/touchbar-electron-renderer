@@ -16,4 +16,4 @@ export function getNativeTouchBar() {
   return __NativeTouchBar__;
 }
 
-type TouchBarType = typeof TouchBar;
+export type TouchBarType = typeof TouchBar;
