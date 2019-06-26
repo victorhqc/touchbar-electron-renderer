@@ -1,13 +1,39 @@
-import Reconciler from 'react-reconciler';
-import difference from 'lodash/difference';
+import Reconciler, { HostConfig as HostConfigType } from 'react-reconciler';
+import { ReactElement } from 'react';
 
-import { TouchBarText } from '../components';
+import {
+  TouchBarText,
+  TouchBar,
+  ComponentProps,
+  AnyTouchBarComponent,
+  TouchBarType,
+} from '../components';
 import createTouchBarElement from '../createTouchBarElement';
 
 let isReRenderNeeded = false;
-const HostConfig = {
+const HostConfig: HostConfigType<
+  TouchBarType,
+  ComponentProps,
+  TouchBar,
+  Maybe<AnyTouchBarComponent>,
+  TouchBarText,
+  {},
+  {},
+  {},
+  {},
+  [],
+  ReturnType<typeof setTimeout>,
+  boolean
+> = {
   now: Date.now,
   supportsMutation: true,
+  supportsPersistence: false,
+  noTimeout: false,
+  isPrimaryRenderer: true,
+  supportsHydration: false,
+  getPublicInstance: function getPublicInstance() {
+    return {};
+  },
   getRootHostContext: function getRootHostContext() {
     return {};
   },
@@ -17,48 +43,92 @@ const HostConfig = {
   shouldSetTextContent: function shouldSetTextContent() {
     return false;
   },
-  createTextInstance: function createTextInstance(newText) {
+  scheduleDeferredCallback: function scheduleDeferredCallback() {},
+  cancelDeferredCallback: function cancelDeferredCallback() {},
+  setTimeout: function(callback, number) {
+    return setTimeout(callback, number);
+  },
+  clearTimeout: function(handler) {
+    if (typeof handler === 'boolean') {
+      return;
+    }
+
+    clearTimeout(handler);
+  },
+  createTextInstance: function createTextInstance(newText: string) {
     return new TouchBarText(newText);
   },
-  createInstance: function createInstance(type, newProps) {
+  createInstance: function createInstance(
+    type: TouchBarType,
+    newProps: ComponentProps,
+  ) {
     return createTouchBarElement(type, newProps);
   },
-  appendInitialChild: function appendInitialChild(parent, child) {
+  appendInitialChild: function appendInitialChild(
+    parent: AnyTouchBarComponent,
+    child: AnyTouchBarComponent,
+  ) {
     parent.appendChild(child);
   },
   finalizeInitialChildren: function finalizeInitialChildren() {
-    return {};
+    return true;
   },
-  prepareForCommit: function prepareForCommit(root) {
-
-  },
-  resetAfterCommit: function resetAfterCommit(root) {
+  prepareForCommit: function prepareForCommit() {},
+  resetAfterCommit: function resetAfterCommit(root: TouchBar) {
     root.refreshTree(isReRenderNeeded);
     isReRenderNeeded = false;
   },
-  appendChildToContainer: function appendChildToContainer(parent, child) {
+  appendChildToContainer: function appendChildToContainer(
+    parent: AnyTouchBarComponent,
+    child: AnyTouchBarComponent,
+  ) {
     parent.appendChild(child);
   },
-  appendChild: function appendChild(parent, child) {
+  appendChild: function appendChild(
+    parent: AnyTouchBarComponent,
+    child: AnyTouchBarComponent,
+  ) {
     parent.appendChild(child);
   },
-  insertBefore: function insertBefore(parent, child, beforeChild) { // parentInstance, child, beforeChild
+  insertBefore: function insertBefore(
+    parent: AnyTouchBarComponent,
+    child: AnyTouchBarComponent,
+    beforeChild: AnyTouchBarComponent,
+  ) {
+    // parentInstance, child, beforeChild
     parent.insertBefore(child, beforeChild);
   },
-  removeChild: function removeChild(parent, child) { // parentInstance, child
+  removeChild: function removeChild(
+    parent: AnyTouchBarComponent,
+    child: AnyTouchBarComponent,
+  ) {
+    // parentInstance, child
     parent.removeChild(child);
   },
-  removeChildFromContainer: function removeChildFromContainer(container, child) { // container, child
+  removeChildFromContainer: function removeChildFromContainer(
+    container: AnyTouchBarComponent,
+    child: AnyTouchBarComponent,
+  ) {
+    // container, child
     container.removeChild(child);
   },
-  insertInContainerBefore: function insertInContainerBefore(container, child, beforeChild) {
+  insertInContainerBefore: function insertInContainerBefore(
+    container: AnyTouchBarComponent,
+    child: AnyTouchBarComponent,
+    beforeChild: AnyTouchBarComponent,
+  ) {
     container.insertBefore(child, beforeChild);
   },
-  prepareUpdate: function prepareUpdate(instance, type, oldProps, newProps, rootContainerInstance) {
+  prepareUpdate: function prepareUpdate(
+    _instance,
+    _type,
+    oldProps: ComponentProps,
+    newProps: ComponentProps,
+  ) {
     // A prop was deleted or deleted.
     if (
-      Object.keys(oldProps).length > Object.keys(newProps).length
-      || Object.keys(oldProps).length < Object.keys(newProps).length
+      Object.keys(oldProps).length > Object.keys(newProps).length ||
+      Object.keys(oldProps).length < Object.keys(newProps).length
     ) {
       return newProps;
     }
@@ -78,25 +148,34 @@ const HostConfig = {
       return diff;
     }
 
-    return undefined;
+    return {};
   },
-  commitUpdate: function commitUpdate(instance, updatePayload, type, oldProps, newProps, finishedWork) {
-    // instance.updateProps(newProps);
-    const forceRerender = instance.update({ type, newProps, oldProps })
+  commitUpdate: function commitUpdate(
+    instance: AnyTouchBarComponent,
+    _updatePayload: {},
+    type: TouchBarType,
+    oldProps: ComponentProps,
+    newProps: ComponentProps,
+  ) {
+    const forceRerender = instance.update({ type, newProps, oldProps });
 
     if (forceRerender) {
       isReRenderNeeded = true;
     }
   },
-  commitTextUpdate: function commitTextUpdate(textInstance, oldText, newText) {
+  commitTextUpdate: function commitTextUpdate(
+    textInstance: TouchBarText,
+    _oldText: string,
+    newText: string,
+  ) {
     textInstance.replaceText(newText);
   },
-  commitMount: function commitMount(element, type, newProps, fiberNode) {
-  },
-  resetTextContent: function resetTextContent() {
-
-  },
-  shouldDeprioritizeSubtree: function shouldDeprioritizeSubtree(type, nextProps) {
+  commitMount: function commitMount() {},
+  resetTextContent: function resetTextContent() {},
+  shouldDeprioritizeSubtree: function shouldDeprioritizeSubtree(
+    _type: TouchBarType,
+    nextProps: ComponentProps,
+  ) {
     return !!nextProps.hidden;
   },
 };
@@ -104,7 +183,7 @@ const HostConfig = {
 const reconcilerInstance = Reconciler(HostConfig);
 
 const TouchBarRenderer = {
-  render(element, renderDom, callback) {
+  render(element: ReactElement, renderDom: any, callback: () => void) {
     // element: This is the react element for App component
     // renderDom: This is the host root element to which the rendered app will be attached.
     // callback: if specified will be called after render is done.
@@ -113,7 +192,11 @@ const TouchBarRenderer = {
     // https://github.com/facebook/react/issues/13206#issuecomment-407535077
     const isAsync = false;
     // Creates root fiber node.
-    const container = reconcilerInstance.createContainer(renderDom, isAsync);
+    const container = reconcilerInstance.createContainer(
+      renderDom,
+      isAsync,
+      false,
+    );
 
     // Since there is no parent (since this is the root fiber). We set parentComponent to null.
     const parentComponent = null;

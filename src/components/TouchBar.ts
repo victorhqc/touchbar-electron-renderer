@@ -1,4 +1,5 @@
 import { BrowserWindow, TouchBar as NativeTouchBar } from 'electron';
+import uuidv4 from 'uuid/v4';
 
 import {
   insertBeforeChild,
@@ -11,6 +12,7 @@ import {
 import { NativeTouchBarComponent } from './types';
 
 class TouchBar {
+  public id: string;
   private children: NativeTouchBarComponent[];
   private didChildrenChange: boolean;
   private electronWindow: BrowserWindow;
@@ -20,6 +22,7 @@ class TouchBar {
     electronWindow: BrowserWindow,
     NativeTouchBar: TouchBarType,
   ) {
+    this.id = uuidv4();
     this.children = [];
     this.didChildrenChange = false;
     this.electronWindow = electronWindow;
@@ -103,6 +106,10 @@ class TouchBar {
     }
 
     return null;
+  }
+
+  public update() {
+    return true;
   }
 }
 

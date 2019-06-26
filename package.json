@@ -40,6 +40,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.134",
     "@types/react": "^16.8.22",
+    "@types/react-reconciler": "^0.18.0",
     "@types/uuid": "^3.4.4",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "@typescript-eslint/parser": "^1.7.0",

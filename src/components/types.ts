@@ -28,12 +28,19 @@ export interface TouchBarComponent<T> extends TouchBarCompositeComponent {
   ): void;
   removeChild(child: TouchBarCompositeComponent): void;
 
-  update(args: { newProps: ComponentProps }): boolean;
+  update(args: {
+    newProps: ComponentProps;
+    oldProps: ComponentProps;
+    type: TouchBarType;
+  }): boolean;
   createInstance(): Maybe<T>;
 }
 
 export type NativeTouchBarComponent = TouchBarComponent<NativeTouchBarItem>;
 export type InternalTouchBarComponent = TouchBarComponent<InternalTouchBarItem>;
+export type AnyTouchBarComponent = TouchBarComponent<
+  NativeTouchBarItem | InternalTouchBarItem
+>;
 
 // export interface TouchBarNativeComponent
 //   extends TouchBarComponent<NativeTouchBarValidItems> {}
@@ -59,3 +66,17 @@ export type InternalTouchBarItem =
 export interface ComponentProps {
   [key: string]: any;
 }
+
+export type TouchBarType =
+  | 'button'
+  | 'color'
+  | 'color-picker'
+  | 'group'
+  | 'label'
+  | 'popover'
+  | 'scrubber'
+  | 'scrub-item'
+  | 'segment'
+  | 'segmented-control'
+  | 'slider'
+  | 'spacer';
