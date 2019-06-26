@@ -1,77 +1,64 @@
+import { SegmentedControlSegment } from 'electron';
 import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 
 import TouchBarText from './TouchBarText';
-import { buildChild } from '../utils';
+import { TouchbarElement } from './types';
 
-export default class TouchBarSegment {
-  constructor(props) {
-    this.setProps(props);
+export default class TouchBarSegment
+  implements TouchbarElement<Maybe<SegmentedControlSegment>> {
+  public id: string;
+  private props: TouchBarSegmentProps;
+  private instance: Maybe<SegmentedControlSegmentIndex>;
+
+  private constructor(props: TouchBarSegmentProps) {
     this.id = uuidv4();
+    this.props = props;
 
-    this.children = null;
     this.instance = null;
   }
 
-  setProps(props) {
-    this.props = props;
-  }
-
-  update({ newProps }) {
+  public update({ newProps }: { newProps: TouchBarSegmentProps }) {
     if (isEqual(newProps, this.props)) {
-      return
-    }
-
-    this.setProps(props);
-    return this.updateInstance();
-  }
-
-  // Text can have only one child.
-  appendChild(label) {
-    if (
-      !label
-      && typeof label !== 'string'
-      && !label instanceof TouchBarText
-    ) {
-      console.warn(`<color /> child should be string, but received ${typeof label}`);
       return;
     }
 
-    this.children = label;
+    this.props = newProps;
+    return this.updateInstance();
   }
 
-  insertBefore(label) {
-    return this.appendChild(label);
+  public appendChild(label: TouchBarText) {
+    this.props.children = label;
   }
 
-  replaceText(label) {
-    return this.appendChild(label);
+  public insertBefore(label: TouchBarText) {
+    this.appendChild(label);
   }
 
-  removeChild() {
-    this.children = null;
+  public replaceText(label: TouchBarText) {
+    this.appendChild(label);
   }
 
-  getNativeArgs() {
-    const {
-      children,
-      disabled,
-      ...props
-    } = this.props;
+  public removeChild() {
+    this.props.children = undefined;
+  }
+
+  private getNativeArgs(): SegmentedControlSegmentIndex {
+    const { children, disabled, ...props } = this.props;
 
     return {
       ...props,
       enabled: disabled ? false : true, // When disabled is truthy, then `enabled` is false.
-      label: children,
+      label: children && children.createInstance(),
     };
   }
 
-  updateInstance() {
+  private updateInstance() {
     const args = this.getNativeArgs();
 
     // Update instance.
-    Object.keys(args).forEach((key) => {
-      if (this.instance[key] !== args[key]) {
+    Object.keys(args).forEach(key => {
+      if (this.instance && this.instance[key] !== args[key]) {
         this.instance[key] = args[key];
       }
     });
@@ -80,10 +67,19 @@ export default class TouchBarSegment {
     return true;
   }
 
-  createInstance() {
+  public createInstance() {
     const args = this.getNativeArgs();
 
     this.instance = args;
     return this.instance;
   }
 }
+
+export interface TouchBarSegmentProps {
+  children?: TouchBarText;
+  disabled?: boolean;
+}
+
+interface SegmentedControlSegmentIndex
+  extends SegmentedControlSegment,
+    WithIndex {}

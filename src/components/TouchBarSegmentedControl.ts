@@ -1,119 +1,113 @@
+import {
+  TouchBarSegmentedControl as NativeTouchBarSegmentedControl,
+  SegmentedControlSegment,
+  TouchBarSegmentedControlConstructorOptions,
+} from 'electron';
 import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 
-import { insertBeforeChild, removeChild, buildChild, getNativeTouchBar } from '../utils';
+import { insertBeforeChild, removeChild, getNativeTouchBar } from '../utils';
 import TouchBarSegment from './TouchBarSegment';
+import { TouchbarElement } from './types';
 
-function isValidChild(child) {
-  if (!child) { return false; }
-  if ( !child instanceof TouchBarSegment && typeof child !== 'string') {
-    console.warn('<segmented-control /> Can only have <segment /> or text as children.');
-    return false;
-  }
+const nop = () => {};
 
-  return true;
-}
+export default class TouchBarSegmentedControl
+  implements TouchbarElement<Maybe<NativeTouchBarSegmentedControl>> {
+  public id: string;
+  private props: TouchBarSegmentedControlProps;
+  private instance: Maybe<NativeTouchBarSegmentedControlIndex>;
+  private didChildrenChange: boolean;
+  private builtChildrenInstances: SegmentedControlSegment[];
 
-export default class TouchBarSegmentedControl {
-  constructor(props) {
-    this.setProps(props);
+  private constructor(props: TouchBarSegmentedControlProps) {
     this.id = uuidv4();
+    this.props = props;
 
-    this.children = [];
     this.instance = null;
     this.didChildrenChange = false;
+    this.builtChildrenInstances = [];
   }
 
-  setProps(props) {
-    this.props = props;
-  }
-
-  update({ newProps }) {
+  public update({ newProps }: { newProps: TouchBarSegmentedControlProps }) {
     if (isEqual(newProps, this.props)) {
       return;
     }
 
-    this.setProps(newProps);
+    this.props = newProps;
     return this.updateInstance();
   }
 
-  /**
-   * TouchBarSegmentedControl can only have <segment /> children.
-   * @param  {stting} child
-   * @return {void}
-   */
-  appendChild(child) {
-    if (!isValidChild(child)) {
-      return;
+  public appendChild(child: TouchBarSegment) {
+    if (!this.props.children) {
+      this.props.children = [];
     }
 
-    this.children.push(child);
+    this.props.children.push(child);
     this.didChildrenChange = true;
   }
 
-  insertBefore(newChild, beforeChild) {
-    if (!isValidChild(child)) {
-      return;
+  public insertBefore(newChild: TouchBarSegment, beforeChild: TouchBarSegment) {
+    if (!this.props.children) {
+      this.props.children = [];
     }
 
-    this.children = insertBeforeChild({
-      children: this.children,
+    this.props.children = insertBeforeChild({
+      children: this.props.children,
       newChild,
       beforeChild,
     });
     this.didChildrenChange = true;
   }
 
-  removeChild(child) {
-    this.children = removeChild({
-      children: this.children,
+  public removeChild(child: TouchBarSegment) {
+    if (!this.props.children) {
+      this.props.children = [];
+    }
+
+    this.props.children = removeChild({
+      children: this.props.children,
       child,
     });
     this.didChildrenChange = true;
   }
 
-  getSegments(buildItems) {
+  private getSegments(buildItems: boolean) {
     if (!buildItems) {
-      return null;
+      return this.builtChildrenInstances;
     }
 
-    if (this.props.segments) {
-      return this.props.segments;
-    }
-
-    return this.children.map(child => buildChild(child));
+    return (this.props.children || []).map(child => child.createInstance());
   }
 
-  getNativeArgs(buildItems = true) {
-    const {
-      children,
-      onChange,
-      segments,
-      selected,
-      ...props
-    } = this.props;
+  private getNativeArgs(
+    buildItems = true,
+  ): TouchBarSegmentedControlConstructorOptionsIndex {
+    const { onChange, selected, ...props } = this.props;
 
     return {
       ...props,
-      change: onChange,
+      change: onChange || nop,
       selectedIndex: selected,
       segments: this.getSegments(buildItems),
     };
   }
 
-  updateInstance() {
+  private updateInstance() {
     let isRerenderNeeded = false;
-    if(this.didChildrenChange) {
+    if (this.didChildrenChange) {
       isRerenderNeeded = true;
     }
 
     const args = this.getNativeArgs(false);
 
     // Update instance.
-    Object.keys(args).forEach((key) => {
-      if (key === 'items' || key === 'segments') { return; }
+    Object.keys(args).forEach(key => {
+      if (key === 'items' || key === 'segments') {
+        return;
+      }
 
-      if (this.instance[key] !== args[key]) {
+      if (this.instance && this.instance[key] !== args[key]) {
         this.instance[key] = args[key];
       }
     });
@@ -122,13 +116,29 @@ export default class TouchBarSegmentedControl {
     return isRerenderNeeded;
   }
 
-  createInstance() {
+  public createInstance() {
     const args = this.getNativeArgs();
 
     const NativeTouchBar = getNativeTouchBar();
+    if (!NativeTouchBar) return null;
+
     this.instance = new NativeTouchBar.TouchBarSegmentedControl(args);
 
     this.didChildrenChange = false;
     return this.instance;
   }
 }
+
+export interface TouchBarSegmentedControlProps {
+  children?: TouchBarSegment[];
+  onChange?: (selectedIndex: number, isSelected: boolean) => void;
+  selected?: number;
+}
+
+interface NativeTouchBarSegmentedControlIndex
+  extends NativeTouchBarSegmentedControl,
+    WithIndex {}
+
+interface TouchBarSegmentedControlConstructorOptionsIndex
+  extends TouchBarSegmentedControlConstructorOptions,
+    WithIndex {}
