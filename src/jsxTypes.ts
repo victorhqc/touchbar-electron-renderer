@@ -108,7 +108,7 @@ declare global {
     type ColorPickerElement = TouchBarColorPicker<any>;
 
     type ScrubItemElement = TouchBarScrubItem<any>;
-    type ScrubberElement = TouchBarScrubber<any, ScrubItemElement>;
+    type ScrubberElement = TouchBarScrubber<any>;
     type SegmentElement = TouchBarSegment<any>;
     type SegmentedControlElement = TouchBarSegmentedControl<any>;
     type SliderElement = TouchBarSlider<any>;
