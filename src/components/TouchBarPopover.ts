@@ -10,6 +10,8 @@ import {
   removeChild,
   getNativeTouchBar,
   isTruthy,
+  Maybe,
+  WithIndex,
 } from '../utils';
 import {
   ComponentProps,

@@ -5,11 +5,11 @@ import {
 } from 'electron';
 import uuidv4 from 'uuid/v4';
 
-import { getNativeTouchBar } from '../utils';
+import { getNativeTouchBar, Maybe, WithIndex } from '../utils';
 import { ComponentProps, NativeTouchBarComponent } from './types';
 import TouchBarText from './TouchBarText';
 
-class TouchBarButton implements NativeTouchBarComponent {
+export class TouchBarButton implements NativeTouchBarComponent {
   public id: string;
   private props: TouchBarButtonProps;
   private instance: Maybe<NativeTouchBarButtonWithIndex>;
@@ -76,8 +76,6 @@ class TouchBarButton implements NativeTouchBarComponent {
     return this.instance;
   }
 }
-
-export default TouchBarButton;
 
 export interface TouchBarButtonProps extends ComponentProps {
   onClick?: () => void;

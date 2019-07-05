@@ -6,6 +6,7 @@ import {
   removeChild,
   getNativeTouchBar,
   isTruthy,
+  Maybe,
 } from '../utils';
 import { ComponentProps, NativeTouchBarComponent } from './types';
 

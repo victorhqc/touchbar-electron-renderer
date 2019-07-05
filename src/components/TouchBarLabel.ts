@@ -5,7 +5,7 @@ import {
 import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 
-import { getNativeTouchBar } from '../utils';
+import { getNativeTouchBar, Maybe, WithIndex } from '../utils';
 import { ComponentProps, NativeTouchBarComponent } from './types';
 import TouchBarText from './TouchBarText';
 

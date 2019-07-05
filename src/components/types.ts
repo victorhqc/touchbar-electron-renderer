@@ -11,6 +11,7 @@ import {
   ScrubberItem,
   SegmentedControlSegment,
 } from 'electron';
+import { Maybe } from '../utils';
 
 export interface TouchBarCompositeComponent {
   id: string;
@@ -67,16 +68,29 @@ export interface ComponentProps {
   readonly [key: string]: any;
 }
 
+// TODO: Figure out how to live happily with Typescript JSX.IntrinsicElements.
 export type TouchBarType =
   | 'button'
+  | 'touchbar-button'
   | 'color'
+  | 'touchbar-color'
   | 'color-picker'
+  | 'touchbar-color-picker'
   | 'group'
+  | 'touchbar-group'
   | 'label'
+  | 'touchbar-label'
   | 'popover'
+  | 'touchbar-popover'
   | 'scrubber'
+  | 'touchbar-scrubber'
   | 'scrub-item'
+  | 'touchbar-scrub-item'
   | 'segment'
+  | 'touchbar-segment'
   | 'segmented-control'
+  | 'touchbar-segmented-control'
   | 'slider'
-  | 'spacer';
+  | 'touchbar-slider'
+  | 'spacer'
+  | 'touchbar-spacer';

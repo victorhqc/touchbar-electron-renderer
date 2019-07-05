@@ -4,6 +4,7 @@ import isEqual from 'lodash/isEqual';
 
 import TouchBarText from './TouchBarText';
 import { ComponentProps, InternalTouchBarComponent } from './types';
+import { Maybe, WithIndex } from '../utils';
 
 class TouchBarScrubItem implements InternalTouchBarComponent {
   public id: string;

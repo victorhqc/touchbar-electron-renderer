@@ -1,4 +1,5 @@
 import { TouchBar } from 'electron';
+import { Maybe } from './types';
 
 // This is a hacky workaround to solve a very simple problem.
 // Atom packages doesn't get `electron` module. Only `remote`.

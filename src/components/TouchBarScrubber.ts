@@ -7,7 +7,13 @@ import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import uuidv4 from 'uuid/v4';
 
-import { insertBeforeChild, removeChild, getNativeTouchBar } from '../utils';
+import {
+  insertBeforeChild,
+  removeChild,
+  getNativeTouchBar,
+  Maybe,
+  WithIndex,
+} from '../utils';
 import TouchBarScrubItem from './TouchBarScrubItem';
 import { ComponentProps, NativeTouchBarComponent } from './types';
 

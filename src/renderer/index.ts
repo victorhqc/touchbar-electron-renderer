@@ -9,6 +9,7 @@ import {
   TouchBarType,
 } from '../components';
 import createTouchBarElement from '../createTouchBarElement';
+import { Maybe } from '../utils';
 
 let isReRenderNeeded = false;
 const HostConfig: HostConfigType<

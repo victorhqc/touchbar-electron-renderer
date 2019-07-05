@@ -8,6 +8,7 @@ import {
   getNativeTouchBar,
   isTruthy,
   TouchBarType,
+  Maybe,
 } from '../utils';
 import { NativeTouchBarComponent } from './types';
 

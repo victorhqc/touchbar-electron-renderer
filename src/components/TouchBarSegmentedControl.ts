@@ -6,7 +6,13 @@ import {
 import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 
-import { insertBeforeChild, removeChild, getNativeTouchBar } from '../utils';
+import {
+  insertBeforeChild,
+  removeChild,
+  getNativeTouchBar,
+  Maybe,
+  WithIndex,
+} from '../utils';
 import TouchBarSegment from './TouchBarSegment';
 import { ComponentProps, NativeTouchBarComponent } from './types';
 

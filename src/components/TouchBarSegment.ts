@@ -4,6 +4,7 @@ import isEqual from 'lodash/isEqual';
 
 import TouchBarText from './TouchBarText';
 import { ComponentProps, InternalTouchBarComponent } from './types';
+import { Maybe, WithIndex } from '../utils';
 
 export default class TouchBarSegment implements InternalTouchBarComponent {
   public id: string;

@@ -10,6 +10,8 @@ import {
   insertBeforeChild,
   removeChild,
   getNativeTouchBar,
+  Maybe,
+  WithIndex,
 } from '../utils';
 import TouchBarColor from './TouchBarColor';
 import { ComponentProps, NativeTouchBarComponent } from './types';

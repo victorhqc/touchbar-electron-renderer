@@ -7,7 +7,7 @@ import isEqual from 'lodash/isEqual';
 
 import debounce from 'lodash/debounce';
 
-import { getNativeTouchBar } from '../utils';
+import { getNativeTouchBar, Maybe, WithIndex } from '../utils';
 import TouchBarText from './TouchBarText';
 import { ComponentProps, NativeTouchBarComponent } from './types';
 
