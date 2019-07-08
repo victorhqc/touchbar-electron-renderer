@@ -27,10 +27,10 @@ class TouchBarScrubber implements NativeTouchBarComponent {
   private builtChildrenInstances: ScrubberItem[];
   private children: TouchBarScrubItem[];
 
-  public constructor({ children, ...props }: TouchBarScrubberProps) {
+  public constructor(props: TouchBarScrubberProps) {
     this.id = uuidv4();
     this.props = props;
-    this.children = children || [];
+    this.children = [];
     this.didChildrenChange = false;
     this.instance = null;
     this.builtChildrenInstances = [];

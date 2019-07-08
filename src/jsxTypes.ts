@@ -10,7 +10,7 @@ export interface TouchBarElement<T> {
 declare global {
   namespace JSX {
     export interface TouchBarRendererElement<T, C> extends TouchBarElement<C> {
-      key?: string;
+      key?: string | null | number;
       ref?: Ref<T>;
     }
 

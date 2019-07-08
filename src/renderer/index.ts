@@ -44,8 +44,11 @@ const HostConfig: HostConfigType<
   shouldSetTextContent: function shouldSetTextContent() {
     return false;
   },
-  scheduleDeferredCallback: function scheduleDeferredCallback() {},
-  cancelDeferredCallback: function cancelDeferredCallback() {},
+  scheduleTimeout: setTimeout,
+  cancelTimeout: clearTimeout,
+  //@ts-ignore
+  scheduleDeferredCallback: setTimeout,
+  cancelDeferredCallback: clearTimeout,
   setTimeout: function(callback, number) {
     return setTimeout(callback, number);
   },
@@ -167,10 +170,11 @@ const HostConfig: HostConfigType<
   // TODO: Figure out how passive effects work. This dummy callbacks somehow work but no idea why
   // or how.
   // @ts-ignore
-  schedulePassiveEffects: function schedulePassiveEffects(wrapped: Function) {
+  schedulePassiveEffects: function schedulePassiveEffects(wrapped) {
     return wrapped()
   },
-  cancelPassiveEffects: function cancelPassiveEffects() {
+  cancelPassiveEffects: function cancelPassiveEffects(...args: any) {
+    console.log('ARGS IN CANCEL', args)
   },
   commitTextUpdate: function commitTextUpdate(
     textInstance: TouchBarText,
