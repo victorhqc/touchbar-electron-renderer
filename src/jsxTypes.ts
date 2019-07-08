@@ -17,7 +17,7 @@ declare global {
     export interface TouchBarButtonElement<T>
       extends TouchBarRendererElement<T, string> {
       onClick?: () => void;
-      icon?: NativeImage;
+      icon?: NativeImage | null;
       iconPosition?: 'left' | 'right' | 'overlay';
       backgroundColor?: string;
     }
@@ -31,7 +31,7 @@ declare global {
     export interface TouchBarPopover<T, C>
       extends TouchBarRendererElement<T, C> {
       label?: string;
-      icon?: NativeImage;
+      icon?: NativeImage | null;
       hideCloseButton?: boolean;
     }
 
@@ -55,13 +55,13 @@ declare global {
 
     export interface TouchBarScrubItem<T>
       extends TouchBarRendererElement<T, string> {
-      icon?: NativeImage;
+      icon?: NativeImage | null;
     }
 
     export interface TouchBarSegment<T>
       extends TouchBarRendererElement<T, string> {
       disabled?: boolean;
-      icon?: NativeImage;
+      icon?: NativeImage | null;
     }
 
     export type SegmentedControlStyle =
