@@ -76,7 +76,7 @@
     "react": "^16.8.2"
   },
   "dependencies": {
-    "react-reconciler": "^0.20.2",
+    "react-reconciler": "^0.20.4",
     "uuid": "^3.3.2"
   }
 }

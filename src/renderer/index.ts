@@ -164,6 +164,14 @@ const HostConfig: HostConfigType<
       isReRenderNeeded = true;
     }
   },
+  // TODO: Figure out how passive effects work. This dummy callbacks somehow work but no idea why
+  // or how.
+  // @ts-ignore
+  schedulePassiveEffects: function schedulePassiveEffects(wrapped: Function) {
+    return wrapped()
+  },
+  cancelPassiveEffects: function cancelPassiveEffects() {
+  },
   commitTextUpdate: function commitTextUpdate(
     textInstance: TouchBarText,
     _oldText: string,
