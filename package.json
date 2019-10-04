@@ -40,8 +40,8 @@
     }
   },
   "devDependencies": {
-    "@types/jest": "^24.0.15",
-    "@types/lodash": "^4.14.134",
+    "@types/jest": "^24.0.18",
+    "@types/lodash": "^4.14.141",
     "@types/react": "^16.8.22",
     "@types/react-reconciler": "^0.18.0",
     "@types/react-test-renderer": "16.8.2",
@@ -49,32 +49,32 @@
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "@typescript-eslint/parser": "^1.7.0",
     "electron": "^4.0.4",
-    "electron-rebuild": "^1.8.4",
-    "eslint": "^5.16.0",
-    "eslint-config-prettier": "^4.2.0",
-    "eslint-loader": "^2.1.2",
-    "eslint-plugin-prettier": "^3.0.1",
-    "eslint-plugin-react": "^7.13.0",
-    "husky": "^2.5.0",
-    "jest": "^24.8.0",
-    "lint-staged": "^8.1.3",
-    "lodash": "^4.17.11",
+    "electron-rebuild": "^1.8.6",
+    "eslint": "^6.5.1",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-loader": "^3.0.2",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-react": "^7.15.1",
+    "husky": "^3.0.8",
+    "jest": "^24.9.0",
+    "lint-staged": "^9.4.1",
+    "lodash": "^4.17.15",
     "np": "^4.0.2",
     "prettier": "^1.18.2",
-    "react": "^16.8.2",
-    "react-test-renderer": "^16.8.6",
-    "rollup": "^1.16.2",
+    "react": "^16.10.2",
+    "react-test-renderer": "^16.10.2",
+    "rollup": "^1.23.0",
     "rollup-plugin-auto-external": "^2.0.0",
     "rollup-plugin-babel": "^4.3.3",
-    "rollup-plugin-commonjs": "^10.0.0",
-    "rollup-plugin-filesize": "^6.1.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-filesize": "^6.2.0",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-local-resolve": "^1.0.7",
-    "rollup-plugin-node-resolve": "^5.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-peer-deps-external": "^2.2.0",
-    "rollup-plugin-typescript2": "^0.21.2",
+    "rollup-plugin-typescript2": "^0.24.3",
     "ts-jest": "^24.0.2",
-    "typescript": "^3.5.2"
+    "typescript": "^3.6.3"
   },
   "peerDependencies": {
     "electron": "^4.0.4",
@@ -82,7 +82,7 @@
     "react": "^16.8.2"
   },
   "dependencies": {
-    "react-reconciler": "^0.20.4",
-    "uuid": "^3.3.2"
+    "react-reconciler": "^0.22.2",
+    "uuid": "^3.3.3"
   }
 }
