@@ -44,21 +44,15 @@ const HostConfig: HostConfigType<
   shouldSetTextContent: function shouldSetTextContent() {
     return false;
   },
-  scheduleTimeout: setTimeout,
-  cancelTimeout: clearTimeout,
-  //@ts-ignore
-  scheduleDeferredCallback: setTimeout,
+  // scheduleTimeout: setTimeout,
+  // cancelTimeout: clearTimeout,
+  scheduleDeferredCallback: (callback, options) => {
+    setTimeout(() => callback(), options ? options.timeout : 0);
+  },
+  // scheduleDeferredCallback: setTimeout,
   cancelDeferredCallback: clearTimeout,
-  setTimeout: function(callback, number) {
-    return setTimeout(callback, number);
-  },
-  clearTimeout: function(handler) {
-    if (typeof handler === 'boolean') {
-      return;
-    }
-
-    clearTimeout(handler);
-  },
+  setTimeout,
+  clearTimeout,
   createTextInstance: function createTextInstance(newText: string) {
     return new TouchBarText(newText);
   },
@@ -77,7 +71,9 @@ const HostConfig: HostConfigType<
   finalizeInitialChildren: function finalizeInitialChildren() {
     return true;
   },
-  prepareForCommit: function prepareForCommit() {},
+  prepareForCommit: function prepareForCommit() {
+    // do nothing.
+  },
   resetAfterCommit: function resetAfterCommit(root: TouchBar) {
     root.refreshTree(isReRenderNeeded);
     isReRenderNeeded = false;
@@ -169,13 +165,12 @@ const HostConfig: HostConfigType<
   },
   // TODO: Figure out how passive effects work. This dummy callbacks somehow work but no idea why
   // or how.
-  // @ts-ignore
-  schedulePassiveEffects: function schedulePassiveEffects(wrapped) {
-    return wrapped()
-  },
-  cancelPassiveEffects: function cancelPassiveEffects(...args: any) {
-    console.log('ARGS IN CANCEL', args)
-  },
+  // schedulePassiveEffects: function schedulePassiveEffects(wrapped: Function) {
+  //   return wrapped();
+  // },
+  // cancelPassiveEffects: function cancelPassiveEffects() {
+  //   // do nothing.
+  // },
   commitTextUpdate: function commitTextUpdate(
     textInstance: TouchBarText,
     _oldText: string,
@@ -183,8 +178,12 @@ const HostConfig: HostConfigType<
   ) {
     textInstance.replaceText(newText);
   },
-  commitMount: function commitMount() {},
-  resetTextContent: function resetTextContent() {},
+  commitMount: function commitMount() {
+    // do nothing.
+  },
+  resetTextContent: function resetTextContent() {
+    // do nothing.
+  },
   shouldDeprioritizeSubtree: function shouldDeprioritizeSubtree(
     _type: TouchBarType,
     nextProps: ComponentProps,
@@ -204,11 +203,13 @@ const TouchBarRenderer = {
     // Disables async rendering, read more about it here:
     // https://github.com/facebook/react/issues/13206#issuecomment-407535077
     const isAsync = false;
+    const hydrate = false;
+
     // Creates root fiber node.
     const container = reconcilerInstance.createContainer(
       renderDom,
       isAsync,
-      false,
+      hydrate,
     );
 
     // Since there is no parent (since this is the root fiber). We set parentComponent to null.

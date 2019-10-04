@@ -45,11 +45,17 @@ class TouchBarSpacer implements NativeTouchBarComponent {
     return this.updateInstance();
   }
 
-  public appendChild() {}
+  public appendChild() {
+    // do nothing.
+  }
 
-  public insertBefore() {}
+  public insertBefore() {
+    // do nothing.
+  }
 
-  public removeChild() {}
+  public removeChild() {
+    // do nothing.
+  }
 
   private getNativeArgs(): TouchBarSpacerConstructorOptions {
     const { small, large, flexible, ...props } = this.props;
