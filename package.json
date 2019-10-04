@@ -19,6 +19,7 @@
   "keywords": [
     "react",
     "react-renderer",
+    "electron",
     "touchbar",
     "macosx"
   ],
@@ -40,19 +41,19 @@
     }
   },
   "devDependencies": {
+    "@semantic-release/git": "^7.0.16",
     "@types/jest": "^24.0.18",
     "@types/lodash": "^4.14.141",
     "@types/react": "^16.8.22",
     "@types/react-reconciler": "^0.18.0",
     "@types/react-test-renderer": "16.8.2",
     "@types/uuid": "^3.4.4",
-    "@typescript-eslint/eslint-plugin": "^1.7.0",
-    "@typescript-eslint/parser": "^1.7.0",
+    "@typescript-eslint/eslint-plugin": "^2.3.2",
+    "@typescript-eslint/parser": "^2.3.2",
     "electron": "^4.0.4",
     "electron-rebuild": "^1.8.6",
     "eslint": "^6.5.1",
     "eslint-config-prettier": "^6.3.0",
-    "eslint-loader": "^3.0.2",
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-react": "^7.15.1",
     "husky": "^3.0.8",
@@ -72,6 +73,7 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-peer-deps-external": "^2.2.0",
     "rollup-plugin-typescript2": "^0.24.3",
+    "semantic-release": "^15.13.24",
     "ts-jest": "^24.0.2",
     "typescript": "^3.6.3"
   },
