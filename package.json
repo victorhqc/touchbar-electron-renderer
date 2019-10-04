@@ -9,7 +9,6 @@
   "scripts": {
     "compile": "rollup -c",
     "compile:watch": "rollup -c --watch",
-    "release": "npm run compile && np",
     "lint": "eslint src/**/*.ts",
     "test": "jest"
   },
@@ -60,7 +59,6 @@
     "jest": "^24.9.0",
     "lint-staged": "^9.4.1",
     "lodash": "^4.17.15",
-    "np": "^4.0.2",
     "prettier": "^1.18.2",
     "react": "^16.10.2",
     "react-test-renderer": "^16.10.2",
