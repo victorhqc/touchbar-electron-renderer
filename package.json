@@ -10,6 +10,7 @@
     "compile": "rollup -c",
     "compile:watch": "rollup -c --watch",
     "release": "npm run compile && np",
+    "lint": "eslint src/**/*.ts",
     "test": "jest"
   },
   "repository": {

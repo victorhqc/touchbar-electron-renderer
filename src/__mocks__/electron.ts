@@ -10,7 +10,7 @@ class BrowserWindow {
   public setTouchBar: jest.Mock<any, any> | undefined;
 }
 
-BrowserWindow.prototype.setTouchBar = jest.fn()
+BrowserWindow.prototype.setTouchBar = jest.fn();
 
 class TouchBarButton {
   public backgroundColor: string | undefined;
