@@ -103,18 +103,10 @@ class TouchBar {
     // - new nodes were added.
     // - node down in tree asks for a hard re-render.
     if (!this.instance || this.didChildrenChange || isReRenderNeeded) {
-      // this.resetInstances();
       return this.createInitialInstance();
     }
 
     return null;
-  }
-
-  public resetInstances() {
-    //  eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    this.electronWindow.setTouchBar(null);
-    this.instance = null;
   }
 
   public update() {
