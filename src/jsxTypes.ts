@@ -1,5 +1,7 @@
-/* eslint @typescript-eslint/no-namespace: 0 */
-import { NativeImage } from 'electron'
+/* eslint @typescript-eslint/no-namespace: "off" */
+/* eslint @typescript-eslint/no-explicit-any: "off" */
+
+import { NativeImage } from 'electron';
 import { Ref } from 'react';
 
 export interface TouchBarElement<T> {
@@ -14,8 +16,10 @@ declare global {
       ref?: Ref<T>;
     }
 
+    type Text = string | null | undefined | number;
+
     export interface TouchBarButtonElement<T>
-      extends TouchBarRendererElement<T, string> {
+      extends TouchBarRendererElement<T, Text> {
       onClick?: () => void;
       icon?: NativeImage | null;
       iconPosition?: 'left' | 'right' | 'overlay';
@@ -54,12 +58,12 @@ declare global {
     }
 
     export interface TouchBarScrubItem<T>
-      extends TouchBarRendererElement<T, string> {
+      extends TouchBarRendererElement<T, Text> {
       icon?: NativeImage | null;
     }
 
     export interface TouchBarSegment<T>
-      extends TouchBarRendererElement<T, string> {
+      extends TouchBarRendererElement<T, Text> {
       disabled?: boolean;
       icon?: NativeImage | null;
     }
@@ -85,7 +89,7 @@ declare global {
     }
 
     export interface TouchBarSlider<T>
-      extends TouchBarRendererElement<T, string> {
+      extends TouchBarRendererElement<T, Text> {
       debounceTime?: number;
       onChange?: (newValue: number) => void;
       value?: number;
@@ -100,9 +104,13 @@ declare global {
       flexible?: boolean;
     }
 
-    type TextElement = TouchBarRendererElement<any, string>;
+    export interface TouchBarLabel<T> extends TouchBarRendererElement<T, Text> {
+      color?: string | null;
+    }
+
+    type TextElement = TouchBarRendererElement<any, Text>;
     type ButtonElement = TouchBarButtonElement<any>;
-    type LabelElement = TouchBarRendererElement<any, string>;
+    type LabelElement = TouchBarLabel<any>;
 
     type ColorElement = TextElement;
     type ColorPickerElement = TouchBarColorPicker<any>;
@@ -123,10 +131,11 @@ declare global {
       | SliderElement
       | SpacerElement
       | ScrubberElement
-      | PopoverElement
-    )[];
+      | PopoverElement)[];
 
     type PopoverValidElements = (
+      | Element
+      | Element[]
       | TextElement
       | ButtonElement
       | ColorPickerElement
@@ -134,8 +143,7 @@ declare global {
       | SegmentedControlElement
       | SliderElement
       | SpacerElement
-      | ScrubberElement
-    )[];
+      | ScrubberElement)[];
 
     type GroupElement = TouchBarRendererElement<any, GroupValidElements>;
     type PopoverElement = TouchBarPopover<any, PopoverValidElements>;

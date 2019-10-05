@@ -13,7 +13,7 @@ class TouchBarLabel implements NativeTouchBarComponent {
   public id: string;
   private props: TouchBarLabelProps;
   private instance: Maybe<NativeTouchBarLabelIndex>;
-  private children: TouchBarText | undefined;
+  private children: TouchBarText | undefined | null;
 
   public constructor({ children, ...props }: TouchBarLabelProps) {
     this.id = uuidv4();
