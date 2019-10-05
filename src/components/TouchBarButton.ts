@@ -5,7 +5,7 @@ import {
 } from 'electron';
 import uuidv4 from 'uuid/v4';
 
-import { getNativeTouchBar, Maybe, WithIndex } from '../utils';
+import { getNativeTouchBar, cleanReactProps, Maybe, WithIndex } from '../utils';
 import { ComponentProps, NativeTouchBarComponent } from './types';
 import TouchBarText from './TouchBarText';
 
@@ -48,6 +48,7 @@ export class TouchBarButton implements NativeTouchBarComponent {
 
     return {
       ...props,
+      ...cleanReactProps(),
       label: this.children && this.children.createInstance(),
       click: onClick,
     };

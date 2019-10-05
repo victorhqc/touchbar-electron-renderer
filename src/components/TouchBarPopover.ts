@@ -1,6 +1,7 @@
 import {
   TouchBarPopover as NativeTouchBarPopover,
   NativeImage,
+  TouchBarPopoverConstructorOptions,
 } from 'electron';
 import isEqual from 'lodash/isEqual';
 import uuidv4 from 'uuid/v4';
@@ -10,6 +11,7 @@ import {
   removeChild,
   getNativeTouchBar,
   isTruthy,
+  cleanReactProps,
   Maybe,
   WithIndex,
 } from '../utils';
@@ -70,12 +72,21 @@ class TouchBarPopover implements NativeTouchBarComponent {
     this.didChildrenChange = true;
   }
 
-  private getNativeArgs(buildItems = true) {
+  private getNativeArgs(): TouchBarPopoverConstructorOptions {
     const { hideCloseButton, ...props } = this.props;
 
+    return {
+      ...props,
+      ...cleanReactProps(),
+      // if `hideCloseButton` is truthy, then `showCloseButton` is false.
+      showCloseButton: hideCloseButton ? false : true,
+    };
+  }
+
+  private getItems(buildItems = true) {
     // TODO: Figure out why some children are react components already.
     // This means that `createInstance` does not exist!
-    this.builtChildrenInstances = !buildItems
+    const items = !buildItems
       ? this.builtChildrenInstances
       : this.children
           .filter(child => child.createInstance)
@@ -84,18 +95,18 @@ class TouchBarPopover implements NativeTouchBarComponent {
           })
           .filter(isTruthy);
 
-    return {
-      ...props,
-      // if `hideCloseButton` is truthy, then `showCloseButton` is false.
-      showCloseButton: hideCloseButton ? false : true,
-      items: this.builtChildrenInstances,
-    };
+    this.builtChildrenInstances = items;
+    return items;
   }
 
   public updateInstance() {
     let isRerenderNeeded = false;
 
-    const args = this.getNativeArgs(false) as WithIndex;
+    const items = this.getItems(false);
+    const args = {
+      ...this.getNativeArgs(),
+      items,
+    } as WithIndex;
 
     // Update instance.
     Object.keys(args).forEach(key => {
@@ -118,13 +129,14 @@ class TouchBarPopover implements NativeTouchBarComponent {
 
   public createInstance() {
     const args = this.getNativeArgs();
+    const items = this.getItems();
 
     const NativeTouchBar = getNativeTouchBar();
     if (!NativeTouchBar) return null;
 
     this.instance = new NativeTouchBar.TouchBarPopover({
       ...args,
-      items: new NativeTouchBar({ items: args.items }),
+      items: new NativeTouchBar({ items }),
     });
 
     this.didChildrenChange = false;

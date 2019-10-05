@@ -4,7 +4,7 @@ import isEqual from 'lodash/isEqual';
 
 import TouchBarText from './TouchBarText';
 import { ComponentProps, InternalTouchBarComponent } from './types';
-import { Maybe, WithIndex } from '../utils';
+import { cleanReactProps, Maybe, WithIndex } from '../utils';
 
 class TouchBarScrubItem implements InternalTouchBarComponent {
   public id: string;
@@ -46,6 +46,7 @@ class TouchBarScrubItem implements InternalTouchBarComponent {
   private getNativeArgs(): ScrubberItemIndex {
     return {
       ...this.props,
+      ...cleanReactProps(),
       label: this.children && this.children.createInstance(),
     };
   }

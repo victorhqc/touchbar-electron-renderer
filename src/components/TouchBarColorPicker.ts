@@ -10,6 +10,7 @@ import {
   insertBeforeChild,
   removeChild,
   getNativeTouchBar,
+  cleanReactProps,
   Maybe,
   WithIndex,
 } from '../utils';
@@ -66,6 +67,7 @@ class TouchBarColorPicker implements NativeTouchBarComponent {
 
     return {
       ...props,
+      ...cleanReactProps(),
       change: onChange,
       selectedColor: selected,
       availableColors: this.children

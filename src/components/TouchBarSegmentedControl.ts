@@ -1,7 +1,6 @@
 import {
   TouchBarSegmentedControl as NativeTouchBarSegmentedControl,
   SegmentedControlSegment,
-  TouchBarSegmentedControlConstructorOptions,
 } from 'electron';
 import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
@@ -10,6 +9,7 @@ import {
   insertBeforeChild,
   removeChild,
   getNativeTouchBar,
+  cleanReactProps,
   Maybe,
   WithIndex,
 } from '../utils';
@@ -76,13 +76,12 @@ export default class TouchBarSegmentedControl
     return this.children.map(child => child.createInstance());
   }
 
-  private getNativeArgs(
-    buildItems = true,
-  ): TouchBarSegmentedControlConstructorOptions {
+  private getNativeArgs(buildItems = true) {
     const { onChange, selected, ...props } = this.props;
 
     return {
       ...props,
+      ...cleanReactProps(),
       change: onChange || nop,
       selectedIndex: selected,
       segments: this.getSegments(buildItems),

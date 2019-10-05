@@ -4,7 +4,7 @@ import isEqual from 'lodash/isEqual';
 
 import TouchBarText from './TouchBarText';
 import { ComponentProps, InternalTouchBarComponent } from './types';
-import { Maybe, WithIndex } from '../utils';
+import { cleanReactProps, Maybe, WithIndex } from '../utils';
 
 export default class TouchBarSegment implements InternalTouchBarComponent {
   public id: string;
@@ -50,6 +50,7 @@ export default class TouchBarSegment implements InternalTouchBarComponent {
 
     return {
       ...props,
+      ...cleanReactProps(),
       enabled: disabled ? false : true, // When disabled is truthy, then `enabled` is false.
       label: this.children && this.children.createInstance(),
     };
