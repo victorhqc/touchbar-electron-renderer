@@ -5,7 +5,7 @@ import {
 import uuidv4 from 'uuid/v4';
 import isEqual from 'lodash/isEqual';
 
-import { getNativeTouchBar, Maybe, WithIndex } from '../utils';
+import { getNativeTouchBar, cleanReactProps, Maybe, WithIndex } from '../utils';
 import { ComponentProps, NativeTouchBarComponent } from './types';
 import TouchBarText from './TouchBarText';
 
@@ -52,6 +52,7 @@ class TouchBarLabel implements NativeTouchBarComponent {
 
     return {
       ...props,
+      ...cleanReactProps(),
       textColor: color,
       label: (this.children && this.children.createInstance()) || '',
     };

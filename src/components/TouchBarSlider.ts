@@ -7,7 +7,7 @@ import isEqual from 'lodash/isEqual';
 
 import debounce from 'lodash/debounce';
 
-import { getNativeTouchBar, Maybe, WithIndex } from '../utils';
+import { getNativeTouchBar, cleanReactProps, Maybe, WithIndex } from '../utils';
 import TouchBarText from './TouchBarText';
 import { ComponentProps, NativeTouchBarComponent } from './types';
 
@@ -51,6 +51,7 @@ class TouchBarSlider implements NativeTouchBarComponent {
 
     return {
       ...props,
+      ...cleanReactProps(),
       label: this.children && this.children.createInstance(),
       // If not debounced, it causes serious performance issues
       change: onChange && debounce(onChange, props.debounceTime || 0),

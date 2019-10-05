@@ -1,7 +1,7 @@
 import {
   TouchBarScrubber as NativeTouchBarScrubber,
-  TouchBarScrubberConstructorOptions,
   ScrubberItem,
+  TouchBarScrubberConstructorOptions,
 } from 'electron';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
@@ -11,6 +11,7 @@ import {
   insertBeforeChild,
   removeChild,
   getNativeTouchBar,
+  cleanReactProps,
   Maybe,
   WithIndex,
 } from '../utils';
@@ -89,6 +90,7 @@ class TouchBarScrubber implements NativeTouchBarComponent {
 
     return {
       ...props,
+      ...cleanReactProps(),
       // If not debounced, it causes serious performance issues
       select: (onSelect && debounce(onSelect, debounceTime || 250)) || nop,
       highlight:
