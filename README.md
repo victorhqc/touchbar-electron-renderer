@@ -384,6 +384,22 @@ For more information go [here](https://electronjs.org/docs/api/touch-bar-segment
 
 For more information go [here](https://electronjs.org/docs/api/touch-bar-spacer).
 
+## Development
+
+### Commits
+
+This package generates its version using [semantic-release](https://github.com/semantic-release/semantic-release)
+which uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) to know what
+version to use.
+
+For this reason, this package implements a commit lint. There are ways to not validate your commits
+but please don't 🙏 this is to make our lives easier. If for some reason you're struggling with
+this, there's a script that may help you deal with it. Simply run the following
+
+```sh
+npm run commit
+```
+
 ## Known issues
 ### Scrubber updates
 When using `onHighlight`, it's called even when user is scrolling and didn't really chose a new element.
