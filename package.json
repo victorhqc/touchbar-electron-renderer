@@ -56,7 +56,7 @@
     "@types/uuid": "^3.4.4",
     "@typescript-eslint/eslint-plugin": "^2.3.2",
     "@typescript-eslint/parser": "^2.3.2",
-    "electron": "^4.0.4",
+    "electron": "^15.5.5",
     "electron-rebuild": "^1.8.6",
     "eslint": "^6.5.1",
     "eslint-config-prettier": "^6.3.0",
@@ -84,7 +84,7 @@
     "typescript": "^3.6.3"
   },
   "peerDependencies": {
-    "electron": "^4.0.4",
+    "electron": "^15.5.5",
     "lodash": "^4.17.11",
     "react": "^16.8.2"
   },
